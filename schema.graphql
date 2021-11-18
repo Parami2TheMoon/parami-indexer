@@ -1,17 +1,40 @@
-type StarterEntity @entity {
+type Did @entity {
+  id: ID!
+  assetTransactions: [AssetTransaction] @derivedFrom(field: "did")
+  advertisementRewards: [AdvertisementReward] @derivedFrom(field: "toDid")
+}
 
-  id: ID! #id is a required field
+type AssetTransaction @entity {
+  id: ID!
+  did: Did!
+  nftId: Nft
+  amount: Int!
+}
 
-  field1: Int!
+type AdvertisementReward @entity {
+  id: ID!
+  toDid: Did!
+  advertisementId: Advertisement!
+  nftId: Nft!
+  rewardType: Boolean!
+  amount: Int!
+}
 
-  field2: String #filed2 is an optional field
+type Nft @entity {
+  id: ID!
+  ownerDid: Did!
+  curAdvertisement: Advertisement
+}
 
-  field3: BigInt
+type Advertisement @entity {
+  id: ID!
+  budgetInAd3: Int!
+  nft: Nft!
+  advertiser: Did!
+}
 
-  field4: Date
-
-  field5: Boolean
-
-
-
+type Ad3Transaction @entity {
+  id: ID!
+  fromDid: Did!
+  toDid: Did!
 }
