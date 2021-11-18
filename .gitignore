@@ -7,8 +7,7 @@
 node_modules/
 dist/
 
-# lock files
-yarn.lock
+# lock files yarn.lock
 package-lock.json
 
 # Compiled Java class files
@@ -53,3 +52,5 @@ Thumbs.db
 *.mov
 *.wmv
 
+# SubQuery data folders
+.data/

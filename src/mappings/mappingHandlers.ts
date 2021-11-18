@@ -12,10 +12,10 @@ import { Did } from "../types/models/Did";
 // }
 
 export async function handleDidAssigned(event: SubstrateEvent): Promise<void> {
-    const {event: {data: [account, balance]}} = event;
+    // const {event: {data: [account, balance]}} = event;
     // const record = await Did.get(event['Di']);
     // await record.save();
-    console.log(event);  
+    console.log("DidAssigned event got: ", event);  
 }
 
 // export async function handleCall(extrinsic: SubstrateExtrinsic): Promise<void> {

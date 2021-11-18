@@ -23,7 +23,12 @@ type AdvertisementReward @entity {
 type Nft @entity {
   id: ID!
   ownerDid: Did!
-  curAdvertisement: Advertisement
+}
+
+type NftCurAdvertisement @entity {
+  id: ID!
+  nft: Nft!
+  advertisement: Advertisement!
 }
 
 type Advertisement @entity {

@@ -20,4 +20,4 @@ dataSources:
           kind: substrate/EventHandler
           filter:
             module: Did
-            method: Assigned
+            method: *
