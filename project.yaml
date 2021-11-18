@@ -1,0 +1,27 @@
+specVersion: 0.2.0
+name: parami-scaner
+version: 1.0.0
+description: >-
+  parami: parallel metaverse identity; and AD platform on web3, for KOL and
+  creator.
+repository: https://github.com/parami-protocol/parami-scaner
+schema:
+  file: ./schema.graphql
+network:
+  genesisHash: '0xa9d0b01b4eda83e41246b375a2a759e32124ff1496ef55b831e6dd8b797d1caa'
+  endpoint: wss://cn3.dev.ad3.app:8443
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
+        - handler: handleEvent
+          kind: substrate/EventHandler
+          filter:
+            module: balances
+            method: Deposit
+        - handler: handleCall
+          kind: substrate/CallHandler
