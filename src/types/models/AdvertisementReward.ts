@@ -12,15 +12,19 @@ export class AdvertisementReward implements Entity {
 
     public id: string;
 
-    public toDidId: string;
-
     public advertisementIdId: string;
 
     public nftIdId: string;
 
-    public rewardType: boolean;
+    public visitorId: string;
 
-    public amount: number;
+    public reward: number;
+
+    public refererId: string;
+
+    public award: number;
+
+    public timestampInSecond: number;
 
 
     async save(): Promise<void>{
@@ -44,13 +48,6 @@ export class AdvertisementReward implements Entity {
     }
 
 
-    static async getByToDidId(toDidId: string): Promise<AdvertisementReward[] | undefined>{
-      
-      const records = await store.getByField('AdvertisementReward', 'toDidId', toDidId);
-      return records.map(record => AdvertisementReward.create(record));
-      
-    }
-
     static async getByAdvertisementIdId(advertisementIdId: string): Promise<AdvertisementReward[] | undefined>{
       
       const records = await store.getByField('AdvertisementReward', 'advertisementIdId', advertisementIdId);
@@ -61,6 +58,20 @@ export class AdvertisementReward implements Entity {
     static async getByNftIdId(nftIdId: string): Promise<AdvertisementReward[] | undefined>{
       
       const records = await store.getByField('AdvertisementReward', 'nftIdId', nftIdId);
+      return records.map(record => AdvertisementReward.create(record));
+      
+    }
+
+    static async getByVisitorId(visitorId: string): Promise<AdvertisementReward[] | undefined>{
+      
+      const records = await store.getByField('AdvertisementReward', 'visitorId', visitorId);
+      return records.map(record => AdvertisementReward.create(record));
+      
+    }
+
+    static async getByRefererId(refererId: string): Promise<AdvertisementReward[] | undefined>{
+      
+      const records = await store.getByField('AdvertisementReward', 'refererId', refererId);
       return records.map(record => AdvertisementReward.create(record));
       
     }

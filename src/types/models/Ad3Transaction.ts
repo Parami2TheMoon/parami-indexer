@@ -16,6 +16,8 @@ export class Ad3Transaction implements Entity {
 
     public toDidId: string;
 
+    public amount: number;
+
 
     async save(): Promise<void>{
         let id = this.id;

@@ -1,7 +1,8 @@
 type Did @entity {
   id: ID!
   assetTransactions: [AssetTransaction] @derivedFrom(field: "did")
-  advertisementRewards: [AdvertisementReward] @derivedFrom(field: "toDid")
+  advertisementVisitRewards: [AdvertisementReward] @derivedFrom(field: "visitor")
+  advertisementForwardRewards: [AdvertisementReward] @derivedFrom(field: "referer")
 }
 
 type AssetTransaction @entity {
@@ -12,14 +13,14 @@ type AssetTransaction @entity {
 }
 
 type AdvertisementReward @entity {
-  id: ID!
-  advertisementId: Advertisement! @index(unique: false)
-  nftId: Nft!
-  visitor: Did! @index(unique: false)
-  reward: Int!
-  referer: Did!
-  award: Int!
-  timestampInSecond: Int!
+  id: ID!
+  advertisementId: Advertisement! @index(unique: false)
+  nftId: Nft!
+  visitor: Did! @index(unique: false)
+  reward: Int!
+  referer: Did!
+  award: Int!
+  timestampInSecond: Int!
 }
 
 type Nft @entity {
