@@ -6,23 +6,24 @@ type Did @entity {
 
 type AssetTransaction @entity {
   id: ID!
-  did: Did!
-  nftId: Nft
+  did: Did! @index(unique: false)
+  nftId: Nft @index(unique: false)
   amount: Int!
 }
 
 type AdvertisementReward @entity {
   id: ID!
-  toDid: Did!
-  advertisementId: Advertisement!
+  toDid: Did! @index(unique: false)
+  advertisementId: Advertisement! @index(unique: false)
   nftId: Nft!
-  rewardType: Boolean!
+  rewardType: Boolean!  #view/forward
   amount: Int!
+  timestampInSecond: Int!
 }
 
 type Nft @entity {
   id: ID!
-  ownerDid: Did!
+  ownerDid: Did! @index(unique: true)
 }
 
 type NftCurAdvertisement @entity {
@@ -40,7 +41,7 @@ type Advertisement @entity {
 
 type Ad3Transaction @entity {
   id: ID!
-  fromDid: Did!
-  toDid: Did!
+  fromDid: Did! @index(unique: false)
+  toDid: Did! @index(unique: false)
   amount: Int!
 }
