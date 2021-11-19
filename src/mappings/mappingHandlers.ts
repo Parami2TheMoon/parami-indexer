@@ -5,6 +5,9 @@ import {Balance} from "@polkadot/types/interfaces";
 import { AssetTransaction } from "../types";
 import { Data } from "@polkadot/types";
 
+function replaceAll(str: string, find: string, replace: string) {
+    return str.replace(new RegExp(find, 'g'), replace);
+}
 
 function guid() {
     function S4() {
