@@ -12,7 +12,7 @@ export class Nft implements Entity {
 
     public id: string;
 
-    public ownerDidId: string;
+    public ownerDid: string;
 
 
     async save(): Promise<void>{
@@ -36,9 +36,9 @@ export class Nft implements Entity {
     }
 
 
-    static async getByOwnerDidId(ownerDidId: string): Promise<Nft[] | undefined>{
+    static async getByOwnerDid(ownerDid: string): Promise<Nft[] | undefined>{
       
-      const records = await store.getByField('Nft', 'ownerDidId', ownerDidId);
+      const records = await store.getByField('Nft', 'ownerDid', ownerDid);
       return records.map(record => Nft.create(record));
       
     }

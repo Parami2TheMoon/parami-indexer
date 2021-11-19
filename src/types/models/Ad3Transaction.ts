@@ -12,11 +12,11 @@ export class Ad3Transaction implements Entity {
 
     public id: string;
 
-    public fromDidId: string;
+    public fromStashAccount: string;
 
-    public toDidId: string;
+    public toStashAccount: string;
 
-    public amount: number;
+    public amount: bigint;
 
     public timestampInSecond: number;
 
@@ -42,16 +42,16 @@ export class Ad3Transaction implements Entity {
     }
 
 
-    static async getByFromDidId(fromDidId: string): Promise<Ad3Transaction[] | undefined>{
+    static async getByFromStashAccount(fromStashAccount: string): Promise<Ad3Transaction[] | undefined>{
       
-      const records = await store.getByField('Ad3Transaction', 'fromDidId', fromDidId);
+      const records = await store.getByField('Ad3Transaction', 'fromStashAccount', fromStashAccount);
       return records.map(record => Ad3Transaction.create(record));
       
     }
 
-    static async getByToDidId(toDidId: string): Promise<Ad3Transaction[] | undefined>{
+    static async getByToStashAccount(toStashAccount: string): Promise<Ad3Transaction[] | undefined>{
       
-      const records = await store.getByField('Ad3Transaction', 'toDidId', toDidId);
+      const records = await store.getByField('Ad3Transaction', 'toStashAccount', toStashAccount);
       return records.map(record => Ad3Transaction.create(record));
       
     }

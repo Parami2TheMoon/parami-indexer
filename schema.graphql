@@ -1,13 +1,13 @@
 type Did @entity {
   id: ID!
-  assetTransactions: [AssetTransaction] @derivedFrom(field: "did")
+  stashAccount: String! @index(unique: false)
   advertisementVisitRewards: [AdvertisementReward] @derivedFrom(field: "visitor")
   advertisementForwardRewards: [AdvertisementReward] @derivedFrom(field: "referer")
 }
 
 type AssetTransaction @entity {
   id: ID!
-  did: Did! @index(unique: false)
+  stashAccount: String @index(unique: false)
   nftId: Nft @index(unique: false)
   timestampInSecond: Int!
   amount: BigInt!
@@ -18,15 +18,15 @@ type AdvertisementReward @entity {
   advertisementId: Advertisement! @index(unique: false)
   nftId: Nft!
   visitor: Did! @index(unique: false)
-  reward: Int!
+  reward: BigInt!
   referer: Did!
-  award: Int!
+  award: BigInt!
   timestampInSecond: Int!
 }
 
 type Nft @entity {
   id: ID!
-  ownerDid: Did!
+  ownerDid: String! @index(unique: false)
 }
 
 type NftCurAdvertisement @entity {
@@ -44,8 +44,8 @@ type Advertisement @entity {
 
 type Ad3Transaction @entity {
   id: ID!
-  fromDid: Did! @index(unique: false)
-  toDid: Did! @index(unique: false)
-  amount: Int!
+  fromStashAccount: String! @index(unique: false)
+  toStashAccount: String! @index(unique: false)
+  amount: BigInt!
   timestampInSecond: Int!
 }

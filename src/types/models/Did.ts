@@ -12,6 +12,8 @@ export class Did implements Entity {
 
     public id: string;
 
+    public stashAccount: string;
+
 
     async save(): Promise<void>{
         let id = this.id;
@@ -33,6 +35,13 @@ export class Did implements Entity {
         }
     }
 
+
+    static async getByStashAccount(stashAccount: string): Promise<Did[] | undefined>{
+      
+      const records = await store.getByField('Did', 'stashAccount', stashAccount);
+      return records.map(record => Did.create(record));
+      
+    }
 
 
     static create(record: Partial<Omit<Did, FunctionPropertyNames<Did>>> & Entity): Did {

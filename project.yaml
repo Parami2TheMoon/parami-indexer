@@ -8,8 +8,9 @@ repository: https://github.com/parami-protocol/parami-scaner
 schema:
   file: ./schema.graphql
 network:
-  genesisHash: '0xa9d0b01b4eda83e41246b375a2a759e32124ff1496ef55b831e6dd8b797d1caa'
-  endpoint: wss://cn3.dev.ad3.app:8443
+  genesisHash: '0xf99530674b039255cd9be02ae9d0c180931157ba228fceb6a2d47b585b9bb8a5'
+  # endpoint: wss://cn3.dev.ad3.app:8443
+  endpoint: ws://10.1.0.119:9944
 dataSources:
   - kind: substrate/Runtime
     startBlock: 1
@@ -34,18 +35,13 @@ dataSources:
         - handler: handleAd3Transaction
           kind: substrate/EventHandler
           filter:
-            module: balance
+            module: balances
             method: Transfer
         - handler: handleAdvertisementCreate
           kind: substrate/EventHandler
           filter:
             module: ad
             method: Deposited
-        - handler: handleAssetIssued
-          kind: substrate/EventHandler
-          filter:
-            module: assets
-            method: Issued
         - handler: handleAssetTransferred
           kind: substrate/EventHandler
           filter:

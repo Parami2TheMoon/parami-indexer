@@ -12,7 +12,7 @@ export class AssetTransaction implements Entity {
 
     public id: string;
 
-    public didId: string;
+    public stashAccount?: string;
 
     public nftIdId?: string;
 
@@ -42,9 +42,9 @@ export class AssetTransaction implements Entity {
     }
 
 
-    static async getByDidId(didId: string): Promise<AssetTransaction[] | undefined>{
+    static async getByStashAccount(stashAccount: string): Promise<AssetTransaction[] | undefined>{
       
-      const records = await store.getByField('AssetTransaction', 'didId', didId);
+      const records = await store.getByField('AssetTransaction', 'stashAccount', stashAccount);
       return records.map(record => AssetTransaction.create(record));
       
     }

@@ -18,11 +18,11 @@ export class AdvertisementReward implements Entity {
 
     public visitorId: string;
 
-    public reward: number;
+    public reward: bigint;
 
     public refererId: string;
 
-    public award: number;
+    public award: bigint;
 
     public timestampInSecond: number;
 
