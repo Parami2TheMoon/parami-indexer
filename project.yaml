@@ -21,8 +21,7 @@ dataSources:
         - handler: handleDidAssigned
           kind: substrate/EventHandler
           filter:
-            module: balances
-            method: Transfer
+            module: did
         - handler: handleTimestampSet
           kind: substrate/CallHandler
           filter:

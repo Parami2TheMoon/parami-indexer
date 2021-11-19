@@ -14,7 +14,7 @@
   resolved "https://registry.npmmirror.com/@babel/compat-data/download/@babel/compat-data-7.16.4.tgz?cache=0&sync_timestamp=1637102913685&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40babel%2Fcompat-data%2Fdownload%2F%40babel%2Fcompat-data-7.16.4.tgz#081d6bbc336ec5c2435c6346b2ae1fb98b5ac68e"
   integrity sha512-1o/jo7D+kC9ZjHX5v+EHrdjl3PhxMrLSOTGsOdHJ+KL8HCaEK6ehrVL2RS6oHDZp+L7xLirLrPmQtEng769J/Q==
 
-"@babel/core@^7.16.0":
+"@babel/core@^7.15.8":
   version "7.16.0"
   resolved "https://registry.npmmirror.com/@babel/core/download/@babel/core-7.16.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40babel%2Fcore%2Fdownload%2F%40babel%2Fcore-7.16.0.tgz#c4ff44046f5fe310525cc9eb4ef5147f0c5374d4"
   integrity sha1-xP9EBG9f4xBSXMnrTvUUfwxTdNQ=
@@ -169,7 +169,7 @@
   resolved "https://registry.npmmirror.com/@babel/parser/download/@babel/parser-7.16.4.tgz?cache=0&sync_timestamp=1637102886037&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40babel%2Fparser%2Fdownload%2F%40babel%2Fparser-7.16.4.tgz#d5f92f57cf2c74ffe9b37981c0e72fee7311372e"
   integrity sha512-6V0qdPUaiVHH3RtZeLIsc+6pDhbYzHR8ogA8w+f+Wc77DuXto19g2QUwveINoS34Uw+W8/hQDGJCx+i4n7xcng==
 
-"@babel/register@^7.16.0":
+"@babel/register@^7.15.3":
   version "7.16.0"
   resolved "https://registry.npmmirror.com/@babel/register/download/@babel/register-7.16.0.tgz?cache=0&sync_timestamp=1635737043552&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40babel%2Fregister%2Fdownload%2F%40babel%2Fregister-7.16.0.tgz#f5d2aa14df37cf7146b9759f7c53818360f24ec6"
   integrity sha1-9dKqFN83z3FGuXWffFOBg2DyTsY=
@@ -180,9 +180,9 @@
     pirates "^4.0.0"
     source-map-support "^0.5.16"
 
-"@babel/runtime@^7.15.3", "@babel/runtime@^7.16.0":
+"@babel/runtime@^7.15.3", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.0":
   version "7.16.3"
-  resolved "https://registry.npmmirror.com/@babel/runtime/download/@babel/runtime-7.16.3.tgz?cache=0&sync_timestamp=1636494920863&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40babel%2Fruntime%2Fdownload%2F%40babel%2Fruntime-7.16.3.tgz#b86f0db02a04187a3c17caa77de69840165d42d5"
+  resolved "https://registry.npmmirror.com/@babel/runtime/download/@babel/runtime-7.16.3.tgz?cache=0&sync_timestamp=1636495059115&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40babel%2Fruntime%2Fdownload%2F%40babel%2Fruntime-7.16.3.tgz#b86f0db02a04187a3c17caa77de69840165d42d5"
   integrity sha512-WBwekcqacdY2e9AF/Q7WLFUWmdJGJTkbjqTjoMDgXkVZ3ZRUvOPsLb5KdwISoQVsbP+DQzVZW4Zhci0DvpbNTQ==
   dependencies:
     regenerator-runtime "^0.13.4"
@@ -350,123 +350,123 @@
   resolved "https://registry.npmmirror.com/@oclif/screen/download/@oclif/screen-1.0.4.tgz?cache=0&sync_timestamp=1633380673107&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40oclif%2Fscreen%2Fdownload%2F%40oclif%2Fscreen-1.0.4.tgz#b740f68609dfae8aa71c3a6cab15d816407ba493"
   integrity sha1-t0D2hgnfroqnHDpsqxXYFkB7pJM=
 
-"@polkadot/api-derive@6.8.1":
-  version "6.8.1"
-  resolved "https://registry.npmmirror.com/@polkadot/api-derive/download/@polkadot/api-derive-6.8.1.tgz#5a94fa5f2fe2101a8319e9da2dd607c28733fdc7"
-  integrity sha512-PKSXHZXScPejhkWOdFE/B30zyZ7Zkieq6ImDl3ramVPWvj6acqadsyrFvcbTCh2fb0Bc1loa+VnkH1O03weU/w==
+"@polkadot/api-derive@6.6.1":
+  version "6.6.1"
+  resolved "https://registry.npmmirror.com/@polkadot/api-derive/download/@polkadot/api-derive-6.6.1.tgz#351f9c7538453ff5bf1ec15a3db5676c7562c5fa"
+  integrity sha1-NR+cdThFP/W/HsFaPbVnbHVixfo=
   dependencies:
-    "@babel/runtime" "^7.16.0"
-    "@polkadot/api" "6.8.1"
-    "@polkadot/rpc-core" "6.8.1"
-    "@polkadot/types" "6.8.1"
-    "@polkadot/util" "^7.8.2"
-    "@polkadot/util-crypto" "^7.8.2"
+    "@babel/runtime" "^7.15.4"
+    "@polkadot/api" "6.6.1"
+    "@polkadot/rpc-core" "6.6.1"
+    "@polkadot/types" "6.6.1"
+    "@polkadot/util" "^7.7.1"
+    "@polkadot/util-crypto" "^7.7.1"
     rxjs "^7.4.0"
 
-"@polkadot/api@6.8.1", "@polkadot/api@^6.8.1":
-  version "6.8.1"
-  resolved "https://registry.npmmirror.com/@polkadot/api/download/@polkadot/api-6.8.1.tgz#966337feebb65d89dc2191599242c35d9b6cf3e4"
-  integrity sha512-XJmSx5NYKrrj1FJmt8AQEhI7TW+5bb5Y3tnFTYc6D1QemxLKt1bP1H+z1zfTO3TWvS0PUtSN36dvrgn4xPELHw==
+"@polkadot/api@6.6.1":
+  version "6.6.1"
+  resolved "https://registry.npmmirror.com/@polkadot/api/download/@polkadot/api-6.6.1.tgz#30c0f9dff64e5e96d65136b1cf9616dffae7aaea"
+  integrity sha1-MMD53/ZOXpbWUTaxz5YW3/rnquo=
   dependencies:
-    "@babel/runtime" "^7.16.0"
-    "@polkadot/api-derive" "6.8.1"
-    "@polkadot/keyring" "^7.8.2"
-    "@polkadot/rpc-core" "6.8.1"
-    "@polkadot/rpc-provider" "6.8.1"
-    "@polkadot/types" "6.8.1"
-    "@polkadot/types-known" "6.8.1"
-    "@polkadot/util" "^7.8.2"
-    "@polkadot/util-crypto" "^7.8.2"
+    "@babel/runtime" "^7.15.4"
+    "@polkadot/api-derive" "6.6.1"
+    "@polkadot/keyring" "^7.7.1"
+    "@polkadot/rpc-core" "6.6.1"
+    "@polkadot/rpc-provider" "6.6.1"
+    "@polkadot/types" "6.6.1"
+    "@polkadot/types-known" "6.6.1"
+    "@polkadot/util" "^7.7.1"
+    "@polkadot/util-crypto" "^7.7.1"
     eventemitter3 "^4.0.7"
     rxjs "^7.4.0"
 
-"@polkadot/keyring@^7.8.2":
+"@polkadot/keyring@^7.7.1":
   version "7.8.2"
-  resolved "https://registry.npmmirror.com/@polkadot/keyring/download/@polkadot/keyring-7.8.2.tgz?cache=0&sync_timestamp=1637227244648&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40polkadot%2Fkeyring%2Fdownload%2F%40polkadot%2Fkeyring-7.8.2.tgz#c4d1a3c6cb9b07a659558f4869d92e00f6420208"
+  resolved "https://registry.npmmirror.com/@polkadot/keyring/download/@polkadot/keyring-7.8.2.tgz#c4d1a3c6cb9b07a659558f4869d92e00f6420208"
   integrity sha1-xNGjxsubB6ZZVY9IadkuAPZCAgg=
   dependencies:
     "@babel/runtime" "^7.16.0"
     "@polkadot/util" "7.8.2"
     "@polkadot/util-crypto" "7.8.2"
 
-"@polkadot/networks@7.8.2", "@polkadot/networks@^7.8.2":
+"@polkadot/networks@7.8.2", "@polkadot/networks@^7.7.1":
   version "7.8.2"
   resolved "https://registry.npmmirror.com/@polkadot/networks/download/@polkadot/networks-7.8.2.tgz#24bc6f946069395c08a24da65c848f7158fb7abf"
   integrity sha1-JLxvlGBpOVwIok2mXISPcVj7er8=
   dependencies:
     "@babel/runtime" "^7.16.0"
 
-"@polkadot/rpc-core@6.8.1":
-  version "6.8.1"
-  resolved "https://registry.npmmirror.com/@polkadot/rpc-core/download/@polkadot/rpc-core-6.8.1.tgz#c6db07b9632584995d6a9cf6640070b59aef8cc1"
-  integrity sha512-GblH3bTLDo7RCvHlazH+A/rWNyqgUvdOz5hZzMpshBxo2fJCNhPi3jA36C3IewK/pN73P3NLmzC392htuJelBg==
+"@polkadot/rpc-core@6.6.1":
+  version "6.6.1"
+  resolved "https://registry.npmmirror.com/@polkadot/rpc-core/download/@polkadot/rpc-core-6.6.1.tgz#7ee74ad4631faf8419305bd374423a13379e2169"
+  integrity sha1-fudK1GMfr4QZMFvTdEI6EzeeIWk=
   dependencies:
-    "@babel/runtime" "^7.16.0"
-    "@polkadot/rpc-provider" "6.8.1"
-    "@polkadot/types" "6.8.1"
-    "@polkadot/util" "^7.8.2"
+    "@babel/runtime" "^7.15.4"
+    "@polkadot/rpc-provider" "6.6.1"
+    "@polkadot/types" "6.6.1"
+    "@polkadot/util" "^7.7.1"
     rxjs "^7.4.0"
 
-"@polkadot/rpc-provider@6.8.1":
-  version "6.8.1"
-  resolved "https://registry.npmmirror.com/@polkadot/rpc-provider/download/@polkadot/rpc-provider-6.8.1.tgz#d21deb02818af9d2d72c12a92ab2286d7b2ee900"
-  integrity sha512-j8G3ZGaKn4gC/xoUORjMps30QzL8O+iKnS/D3v2ysKGf6PqQ/DDEii0pfJzS4LEvSqIXqo/O2sm5rFY8SfJHNg==
+"@polkadot/rpc-provider@6.6.1":
+  version "6.6.1"
+  resolved "https://registry.npmmirror.com/@polkadot/rpc-provider/download/@polkadot/rpc-provider-6.6.1.tgz#a704f7c1b2ffeca8fcca920c394dbbd42017f335"
+  integrity sha1-pwT3wbL/7Kj8ypIMOU271CAX8zU=
   dependencies:
-    "@babel/runtime" "^7.16.0"
-    "@polkadot/types" "6.8.1"
-    "@polkadot/util" "^7.8.2"
-    "@polkadot/util-crypto" "^7.8.2"
-    "@polkadot/x-fetch" "^7.8.2"
-    "@polkadot/x-global" "^7.8.2"
-    "@polkadot/x-ws" "^7.8.2"
+    "@babel/runtime" "^7.15.4"
+    "@polkadot/types" "6.6.1"
+    "@polkadot/util" "^7.7.1"
+    "@polkadot/util-crypto" "^7.7.1"
+    "@polkadot/x-fetch" "^7.7.1"
+    "@polkadot/x-global" "^7.7.1"
+    "@polkadot/x-ws" "^7.7.1"
     eventemitter3 "^4.0.7"
 
-"@polkadot/typegen@^6.8.1":
-  version "6.8.1"
-  resolved "https://registry.npmmirror.com/@polkadot/typegen/download/@polkadot/typegen-6.8.1.tgz#eb583d18457673afaab63e2a874c218429fcc7d0"
-  integrity sha512-BYQAUIbwS4oeMyEifa1MjLs+ZODYULl4nY3IsgpFkdLMs+yiyHr+246v2CA/mM5SZVvMrlw1zddmiWOOPsD/jQ==
+"@polkadot/typegen@6.6.1":
+  version "6.6.1"
+  resolved "https://registry.npmmirror.com/@polkadot/typegen/download/@polkadot/typegen-6.6.1.tgz#cae5b3e00c21296b92dc78960dbdbe3dd427f245"
+  integrity sha1-yuWz4AwhKWuS3HiWDb2+PdQn8kU=
   dependencies:
-    "@babel/core" "^7.16.0"
-    "@babel/register" "^7.16.0"
-    "@babel/runtime" "^7.16.0"
-    "@polkadot/api" "6.8.1"
-    "@polkadot/rpc-provider" "6.8.1"
-    "@polkadot/types" "6.8.1"
-    "@polkadot/types-support" "6.8.1"
-    "@polkadot/util" "^7.8.2"
+    "@babel/core" "^7.15.8"
+    "@babel/register" "^7.15.3"
+    "@babel/runtime" "^7.15.4"
+    "@polkadot/api" "6.6.1"
+    "@polkadot/rpc-provider" "6.6.1"
+    "@polkadot/types" "6.6.1"
+    "@polkadot/types-support" "6.6.1"
+    "@polkadot/util" "^7.7.1"
     handlebars "^4.7.7"
     websocket "^1.0.34"
     yargs "^17.2.1"
 
-"@polkadot/types-known@6.8.1":
-  version "6.8.1"
-  resolved "https://registry.npmmirror.com/@polkadot/types-known/download/@polkadot/types-known-6.8.1.tgz#65b8cb819f568dd5eda9fae97c7c2c93f2ca9386"
-  integrity sha512-Vhcd0ZOf0eOzPJI+IX/oYQjHw5VEcGuhH0up+SlUsxLlZvSFtZhrf7nchfZoAGKDTWPT4RIzxLLsWhjjYhAu6A==
+"@polkadot/types-known@6.6.1":
+  version "6.6.1"
+  resolved "https://registry.npmmirror.com/@polkadot/types-known/download/@polkadot/types-known-6.6.1.tgz#9842a47696137e97ad75a21839b1acfe902c23e1"
+  integrity sha1-mEKkdpYTfpetdaIYObGs/pAsI+E=
   dependencies:
-    "@babel/runtime" "^7.16.0"
-    "@polkadot/networks" "^7.8.2"
-    "@polkadot/types" "6.8.1"
-    "@polkadot/util" "^7.8.2"
+    "@babel/runtime" "^7.15.4"
+    "@polkadot/networks" "^7.7.1"
+    "@polkadot/types" "6.6.1"
+    "@polkadot/util" "^7.7.1"
 
-"@polkadot/types-support@6.8.1":
-  version "6.8.1"
-  resolved "https://registry.npmmirror.com/@polkadot/types-support/download/@polkadot/types-support-6.8.1.tgz#d9ab804630aa1bf6fa7e60efbbf8e3f3eca62ccd"
-  integrity sha512-Ur6eIwfMaCwXvm3QiiSKE80mE3T8TCAbHtsRPyu/de7qJamHKUQyxYbKYsycp7u6xBbSyYoFE3VbdcWasNCNMA==
+"@polkadot/types-support@6.6.1":
+  version "6.6.1"
+  resolved "https://registry.npmmirror.com/@polkadot/types-support/download/@polkadot/types-support-6.6.1.tgz#aec70a4e30b0591d857bc25853c944922f3f9544"
+  integrity sha1-rscKTjCwWR2Fe8JYU8lEki8/lUQ=
   dependencies:
-    "@babel/runtime" "^7.16.0"
-    "@polkadot/util" "^7.8.2"
+    "@babel/runtime" "^7.15.4"
+    "@polkadot/util" "^7.7.1"
 
-"@polkadot/types@6.8.1":
-  version "6.8.1"
-  resolved "https://registry.npmmirror.com/@polkadot/types/download/@polkadot/types-6.8.1.tgz#9798063ee1f54b6b7be8e9cd755d46b1efd77fcc"
-  integrity sha512-MX7OQhGCaDLu29mu+uRkZhufqel1tCZKaPEBM5uk+mud6UCdZ5NHQb0wfr7d5oYxpj9GmWxALCmNMlRQa0172g==
+"@polkadot/types@6.6.1":
+  version "6.6.1"
+  resolved "https://registry.npmmirror.com/@polkadot/types/download/@polkadot/types-6.6.1.tgz#eddc9c5a11637638b03c7cf3eff0eb0770b2db10"
+  integrity sha1-7dycWhFjdjiwPHzz7/DrB3Cy2xA=
   dependencies:
-    "@babel/runtime" "^7.16.0"
-    "@polkadot/util" "^7.8.2"
-    "@polkadot/util-crypto" "^7.8.2"
+    "@babel/runtime" "^7.15.4"
+    "@polkadot/util" "^7.7.1"
+    "@polkadot/util-crypto" "^7.7.1"
     rxjs "^7.4.0"
 
-"@polkadot/util-crypto@7.8.2", "@polkadot/util-crypto@^7.8.2":
+"@polkadot/util-crypto@7.8.2", "@polkadot/util-crypto@^7.7.1":
   version "7.8.2"
   resolved "https://registry.npmmirror.com/@polkadot/util-crypto/download/@polkadot/util-crypto-7.8.2.tgz#8fdf177793b00eced2d132ce03b0a9c0b0d1441b"
   integrity sha1-j98Xd5OwDs7S0TLOA7CpwLDRRBs=
@@ -489,7 +489,7 @@
     tweetnacl "^1.0.3"
     xxhashjs "^0.2.2"
 
-"@polkadot/util@7.8.2", "@polkadot/util@^7.8.2":
+"@polkadot/util@7.8.2", "@polkadot/util@^7.7.1":
   version "7.8.2"
   resolved "https://registry.npmmirror.com/@polkadot/util/download/@polkadot/util-7.8.2.tgz#7d42e4981fdec6f032f29602400b966ddababf03"
   integrity sha1-fULkmB/exvAy8pYCQAuWbdq6vwM=
@@ -525,7 +525,7 @@
     "@polkadot/wasm-crypto-asmjs" "^4.2.1"
     "@polkadot/wasm-crypto-wasm" "^4.2.1"
 
-"@polkadot/x-fetch@^7.8.2":
+"@polkadot/x-fetch@^7.7.1":
   version "7.8.2"
   resolved "https://registry.npmmirror.com/@polkadot/x-fetch/download/@polkadot/x-fetch-7.8.2.tgz#50912bc547a3063215843aa335770bbf9b974d09"
   integrity sha1-UJErxUejBjIVhDqjNXcLv5uXTQk=
@@ -535,7 +535,7 @@
     "@types/node-fetch" "^2.5.12"
     node-fetch "^2.6.6"
 
-"@polkadot/x-global@7.8.2", "@polkadot/x-global@^7.8.2":
+"@polkadot/x-global@7.8.2", "@polkadot/x-global@^7.7.1":
   version "7.8.2"
   resolved "https://registry.npmmirror.com/@polkadot/x-global/download/@polkadot/x-global-7.8.2.tgz#bc15bfd46e78b8a97622e07824f1e75566f3cb3a"
   integrity sha1-vBW/1G54uKl2IuB4JPHnVWbzyzo=
@@ -566,7 +566,7 @@
     "@babel/runtime" "^7.16.0"
     "@polkadot/x-global" "7.8.2"
 
-"@polkadot/x-ws@^7.8.2":
+"@polkadot/x-ws@^7.7.1":
   version "7.8.2"
   resolved "https://registry.npmmirror.com/@polkadot/x-ws/download/@polkadot/x-ws-7.8.2.tgz#8a9dce26603b70c5e6cd8f4edd500959315311ce"
   integrity sha1-ip3OJmA7cMXmzY9O3VAJWTFTEc4=
