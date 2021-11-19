@@ -22,6 +22,12 @@ dataSources:
           kind: substrate/EventHandler
           filter:
             module: did
+            method: Assigned
+        - handler: handleNftMinted
+          kind: substrate/EventHandler
+          filter: 
+            module: nft
+            method: Minted
         - handler: handleTimestampSet
           kind: substrate/CallHandler
           filter:
