@@ -8,7 +8,9 @@
     "prepack": "rm -rf dist && yarn run build",
     "test": "jest",
     "codegen": "./node_modules/.bin/subql codegen",
-    "start:docker": "docker-compose pull && docker-compose up --remove-orphans | tee parami-scaner.log"
+    "start:docker": "docker-compose pull && docker-compose up --remove-orphans | tee parami-scaner.log",
+    "generate:defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package kitty-birthinfo/api-interfaces --input ./src/api-interfaces",
+    "generate:meta": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --package kitty-birthinfo/api-interfaces --endpoint ./src/api-interfaces/parami-protocal.json --output ./src/api-interfaces --strict"
   },
   "homepage": "https://github.com/subquery/subql-starter",
   "repository": "github:subquery/subql-starter",
@@ -20,9 +22,13 @@
   "author": "Parami Developers",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@polkadot/api": "^6",
+    "@polkadot/api": "^6.8.1",
+    "@subql/cli": "latest",
     "@subql/types": "latest",
     "typescript": "4.4.4",
-    "@subql/cli": "latest"
+    "ts-node": "^10.4.0"
+  },
+  "dependencies": {
+    "@polkadot/typegen": "^6.8.1"
   }
 }

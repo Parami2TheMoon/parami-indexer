@@ -1,3 +1,5 @@
+# parami-scaner:
+I learn the main information from the "Custom Substrate Chain" section of [this page](https://doc.subquery.network/en/create/mapping/#preparation) 
 # SubQuery - Starter Package
 
 

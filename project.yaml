@@ -28,5 +28,3 @@ dataSources:
           filter:
             module: timestamp
             method: set
-        - handler: handleBlock
-          kind: substrate/BlockHandler 

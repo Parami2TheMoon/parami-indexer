@@ -4,7 +4,7 @@ import { Did } from "../types/models/Did";
 
 
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
-    logger.info("mappingHandler got a block: ", block.block.header.number.toNumber());
+    logger.debug("mappingHandler got a block: ", block.block.header.number.toNumber());
 }
 
 export async function handleDidAssigned(event: SubstrateEvent): Promise<void> {
@@ -15,7 +15,7 @@ export async function handleDidAssigned(event: SubstrateEvent): Promise<void> {
 }
 
 export async function handleTimestampSet(extrinsic: SubstrateExtrinsic): Promise<void> {
-    logger.info("mappingHandler got timestamp set call: ", extrinsic);  
+    logger.debug("mappingHandler got timestamp set call: ", extrinsic);  
 }
 
 
