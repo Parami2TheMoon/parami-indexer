@@ -8,7 +8,7 @@ type AssetTransaction @entity {
   id: ID!
   did: Did! @index(unique: false)
   nftId: Nft @index(unique: false)
-  amount: Float!
+  amount: Int!
 }
 
 type AdvertisementReward @entity {
@@ -16,9 +16,9 @@ type AdvertisementReward @entity {
   advertisementId: Advertisement! @index(unique: false)
   nftId: Nft!
   visitor: Did! @index(unique: false)
-  reward: Float!
+  reward: Int!
   referer: Did!
-  award: Float!
+  award: Int!
   timestampInSecond: Int!
 }
 
