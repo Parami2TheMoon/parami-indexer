@@ -2,6 +2,7 @@ import {SubstrateExtrinsic,SubstrateEvent,SubstrateBlock} from "@subql/types";
 import {Balance} from "@polkadot/types/interfaces";
 import { Did } from "../types/models/Did";
 import { Nft } from "../types/models/Nft";
+import { AdvertisementReward } from "../types/models/AdvertisementReward";
 
 
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
@@ -36,4 +37,14 @@ export async function handleTimestampSet(extrinsic: SubstrateExtrinsic): Promise
     logger.debug("mappingHandler got timestamp set call: ", extrinsic);  
 }
 
-
+export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
+    logger.info(`handleAdPayout got a Paid event: ${JSON.stringify(event.toHuman())}` );  
+    const {event: {data: [id,nft, visitor, reward, referer,award]}} = event;
+    const advertisementReward= new AdvertisementReward(id.toString()+reward.toString());
+    advertisementReward.reward= Number(reward.toString());
+    advertisementReward.award= Number(award.toString());
+    advertisementReward.refererId= referer.toString();
+    advertisementReward.visitorId= visitor.toString();
+    advertisementReward.nftIdId = nft.toString();
+    await advertisementReward.save();
+}
