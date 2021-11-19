@@ -14,9 +14,9 @@ export class Advertisement implements Entity {
 
     public budgetInAd3: number;
 
-    public nftId: string;
-
     public advertiserId: string;
+
+    public timestampInSecond: number;
 
 
     async save(): Promise<void>{
@@ -39,13 +39,6 @@ export class Advertisement implements Entity {
         }
     }
 
-
-    static async getByNftId(nftId: string): Promise<Advertisement[] | undefined>{
-      
-      const records = await store.getByField('Advertisement', 'nftId', nftId);
-      return records.map(record => Advertisement.create(record));
-      
-    }
 
     static async getByAdvertiserId(advertiserId: string): Promise<Advertisement[] | undefined>{
       

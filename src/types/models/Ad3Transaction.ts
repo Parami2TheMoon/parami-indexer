@@ -18,6 +18,8 @@ export class Ad3Transaction implements Entity {
 
     public amount: number;
 
+    public timestampInSecond: number;
+
 
     async save(): Promise<void>{
         let id = this.id;

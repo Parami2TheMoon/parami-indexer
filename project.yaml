@@ -16,8 +16,6 @@ dataSources:
     mapping:
       file: ./dist/index.js
       handlers:
-        - handler: handleBlock
-          kind: substrate/BlockHandler 
         - handler: handleDidAssigned
           kind: substrate/EventHandler
           filter:
@@ -28,11 +26,6 @@ dataSources:
           filter: 
             module: nft
             method: Minted
-        - handler: handleTimestampSet
-          kind: substrate/CallHandler
-          filter:
-            module: timestamp
-            method: set
         - handler: handleAdPayout
           kind: substrate/EventHandler
           filter:
@@ -48,3 +41,18 @@ dataSources:
           filter:
             module: ad
             method: Deposited
+        - handler: handleAssetIssued
+          kind: substrate/EventHandler
+          filter:
+            module: assets
+            method: Issued
+        - handler: handleAssetTransferred
+          kind: substrate/EventHandler
+          filter:
+            module: assets
+            method: Transferred
+        - handler: handleAssetBurned
+          kind: substrate/EventHandler
+          filter:
+            module: assets
+            method: Burned

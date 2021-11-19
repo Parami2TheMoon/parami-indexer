@@ -1,6 +1,10 @@
 import { SubstrateExtrinsic, SubstrateEvent, SubstrateBlock } from "@subql/types";
 //import { Balance } from "@polkadot/types/interfaces";
 import { Nft, Did, AdvertisementReward, Advertisement, Ad3Transaction } from "../types";
+import {Balance} from "@polkadot/types/interfaces";
+import { AssetTransaction } from "../types";
+import { Data } from "@polkadot/types";
+
 
 function guid() {
     function S4() {
@@ -34,10 +38,7 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
     const nft = new Nft(assetId.toHuman() as string);
     nft.ownerDidId = did.toHuman() as string;
     await nft.save();
-}
-
-export async function handleTimestampSet(extrinsic: SubstrateExtrinsic): Promise<void> {
-    logger.debug("mappingHandler got timestamp set call: ", extrinsic);
+    logger.info(`nft saved success: ${JSON.stringify(nft)}` );  
 }
 
 export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
@@ -51,6 +52,58 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     advertisementReward.nftIdId = nft.toString();
     advertisementReward.timestampInSecond = Date.now() / 1000;
     await advertisementReward.save();
+}
+
+/**
+ * 
+ * @param event 		data: Issued(T::AssetId, T::AccountId, T::Balance),
+ */
+export async function handleAssetIssued(event: SubstrateEvent): Promise<void> {
+    logger.info(`mappingHandler got a AssetIssued event: ${JSON.stringify(event.toHuman())}` );  
+    const {event: {data: [assetId, accountId, balance]}} = event;
+    const assetTransaction = new AssetTransaction(new Date().getMilliseconds().toString());
+    assetTransaction.didId = accountId.toHuman() as string;
+    assetTransaction.amount = BigInt(balance.toString());
+    await assetTransaction.save(); 
+    logger.info(`AssetTransaction saved success: ${JSON.stringify(assetTransaction)}` );  
+}
+
+/**
+ * 
+ * @param event 		data: 		Transferred(T::AssetId, T::AccountId, T::AccountId, T::Balance)
+ */
+ export async function handleAssetTransferred(event: SubstrateEvent): Promise<void> {
+    logger.info(`mappingHandler got a AssetIssued event: ${JSON.stringify(event.toHuman())}` );  
+    const {event: {data: [assetId, fromAccountId, toAccountId, balance]}} = event;
+    
+    const txnOfFromAccount = new AssetTransaction(new Date().getMilliseconds().toString());
+    txnOfFromAccount.nftIdId = assetId.toHuman() as string;
+    txnOfFromAccount.didId = fromAccountId.toHuman() as string;
+    txnOfFromAccount.amount = BigInt(balance.toString());
+    await txnOfFromAccount.save(); 
+    logger.info(`AssetTransaction of transfer saved success for from account: ${JSON.stringify(txnOfFromAccount)}`);  
+
+    const txnToAccount = new AssetTransaction(new Date().getMilliseconds().toString());
+    txnToAccount.nftIdId = assetId.toHuman() as string;
+    txnToAccount.didId = toAccountId.toHuman() as string;
+    txnToAccount.amount = BigInt(balance.toString());
+    await txnToAccount.save(); 
+    logger.info(`AssetTransaction of transfer saved success for to account: ${JSON.stringify(txnToAccount)}`); 
+}
+
+/**
+ * 
+ * @param event 		data: 		Burned(T::AssetId, T::AccountId, T::Balance),
+ */
+ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
+    logger.info(`mappingHandler got a AssetBurned event: ${JSON.stringify(event.toHuman())}` );  
+    const {event: {data: [assetId, accountId, balance]}} = event;
+    const assetTransaction = new AssetTransaction(new Date().getMilliseconds().toString());
+    assetTransaction.nftIdId = assetId.toHuman() as string;
+    assetTransaction.didId = accountId.toHuman() as string;
+    assetTransaction.amount = BigInt(balance.toString());
+    await assetTransaction.save(); 
+    logger.info(`AssetTransaction for burned saved success: ${JSON.stringify(assetTransaction)}` );  
 }
 
 //balance.Transfer

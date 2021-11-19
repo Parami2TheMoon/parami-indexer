@@ -9,7 +9,8 @@ type AssetTransaction @entity {
   id: ID!
   did: Did! @index(unique: false)
   nftId: Nft @index(unique: false)
-  amount: Int!
+  timestampInSecond: Int!
+  amount: BigInt!
 }
 
 type AdvertisementReward @entity {
@@ -25,7 +26,7 @@ type AdvertisementReward @entity {
 
 type Nft @entity {
   id: ID!
-  ownerDid: Did! @index(unique: true)
+  ownerDid: Did!
 }
 
 type NftCurAdvertisement @entity {

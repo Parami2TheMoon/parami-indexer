@@ -16,7 +16,9 @@ export class AssetTransaction implements Entity {
 
     public nftIdId?: string;
 
-    public amount: number;
+    public timestampInSecond: number;
+
+    public amount: bigint;
 
 
     async save(): Promise<void>{
