@@ -46,4 +46,5 @@ type Ad3Transaction @entity {
   fromDid: Did! @index(unique: false)
   toDid: Did! @index(unique: false)
   amount: Int!
+  timestampInSecond: Int!
 }

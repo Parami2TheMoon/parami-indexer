@@ -38,3 +38,8 @@ dataSources:
           filter:
             module: ad
             method: Paid
+        - handler: handleAd3Transaction
+          kind: substrate/EventHandler
+          filter:
+            module: balance
+            method: Transfer

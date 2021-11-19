@@ -1,10 +1,16 @@
-import {SubstrateExtrinsic,SubstrateEvent,SubstrateBlock} from "@subql/types";
-import {Balance} from "@polkadot/types/interfaces";
+import { SubstrateExtrinsic, SubstrateEvent, SubstrateBlock } from "@subql/types";
+import { Balance } from "@polkadot/types/interfaces";
 import { Did } from "../types/models/Did";
 import { Nft } from "../types/models/Nft";
 import { AdvertisementReward } from "../types/models/AdvertisementReward";
+import { Ad3Transaction } from "../types/models/Ad3Transaction";
 
-
+function guid() {
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
     logger.debug("mappingHandler got a block: ", block.block.header.number.toNumber());
 }
@@ -13,8 +19,8 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
  * @param event 
  */
 export async function handleDidAssigned(event: SubstrateEvent): Promise<void> {
-    logger.info(`mappingHandler got aDidAssigned event: ${JSON.stringify(event.toHuman())}` );  
-    const {event: {data: [did, stashAccount]}} = event;
+    logger.info(`mappingHandler got aDidAssigned event: ${JSON.stringify(event.toHuman())}`);
+    const { event: { data: [did, stashAccount] } } = event;
     const record = new Did(did.toHuman() as string);
     await record.save();
 }
@@ -26,26 +32,38 @@ export async function handleDidAssigned(event: SubstrateEvent): Promise<void> {
  * data format:         Minted(T::DecentralizedId, T::AssetId, T::AssetId, BalanceOf<T>)
  */
 export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
-    logger.info(`mappingHandler got a NftMinted event: ${JSON.stringify(event.toHuman())}` );  
-    const {event: {data: [did, assetId, _, mintedAmount]}} = event;
+    logger.info(`mappingHandler got a NftMinted event: ${JSON.stringify(event.toHuman())}`);
+    const { event: { data: [did, assetId, _, mintedAmount] } } = event;
     const nft = new Nft(assetId.toHuman() as string);
     nft.ownerDidId = did.toHuman() as string;
     await nft.save();
 }
 
 export async function handleTimestampSet(extrinsic: SubstrateExtrinsic): Promise<void> {
-    logger.debug("mappingHandler got timestamp set call: ", extrinsic);  
+    logger.debug("mappingHandler got timestamp set call: ", extrinsic);
 }
 
 export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
-    logger.info(`handleAdPayout got a Paid event: ${JSON.stringify(event.toHuman())}` );  
-    const {event: {data: [id,nft, visitor, reward, referer,award]}} = event;
-    const advertisementReward= new AdvertisementReward(id.toString()+reward.toString());
-    advertisementReward.reward= Number(reward.toString());
-    advertisementReward.award= Number(award.toString());
-    advertisementReward.refererId= referer.toString();
-    advertisementReward.visitorId= visitor.toString();
+    logger.info(`handleAdPayout got a Paid event: ${JSON.stringify(event.toHuman())}`);
+    const { event: { data: [id, nft, visitor, reward, referer, award] } } = event;
+    const advertisementReward = new AdvertisementReward(id.toString() + reward.toString());
+    advertisementReward.reward = Number(reward.toString());
+    advertisementReward.award = Number(award.toString());
+    advertisementReward.refererId = referer.toString();
+    advertisementReward.visitorId = visitor.toString();
     advertisementReward.nftIdId = nft.toString();
-    advertisementReward.timestampInSecond = Date.now()/1000;
+    advertisementReward.timestampInSecond = Date.now() / 1000;
     await advertisementReward.save();
+}
+
+
+export async function handleAd3Transaction(event: SubstrateEvent): Promise<void> {
+    logger.info(`handleAd3Transaction got a Paid event: ${JSON.stringify(event.toHuman())}`);
+    const { event: { data: [from, to, value] } } = event;
+    const ad3Transaction = new Ad3Transaction(guid());
+    ad3Transaction.fromDidId = from.toString();
+    ad3Transaction.toDidId = to.toString();
+    ad3Transaction.amount = Number(value.toString());
+    ad3Transaction.timestampInSecond = Date.now() / 1000;
+    await ad3Transaction.save();
 }
