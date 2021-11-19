@@ -9,8 +9,8 @@
     "test": "jest",
     "codegen": "./node_modules/.bin/subql codegen",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans | tee parami-scaner.log",
-    "generate:defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package kitty-birthinfo/api-interfaces --input ./src/api-interfaces",
-    "generate:meta": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --package kitty-birthinfo/api-interfaces --endpoint ./src/api-interfaces/parami-protocal.json --output ./src/api-interfaces --strict"
+    "generate:defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package ./api-interface --input ./src/api-interface",
+    "generate:meta": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --package ./api-interface --endpoint ./src/api-interface/parami-protocal.json --output ./src/api-interface --strict"
   },
   "homepage": "https://github.com/subquery/subql-starter",
   "repository": "github:subquery/subql-starter",
