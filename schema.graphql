@@ -7,8 +7,8 @@ type Did @entity {
 
 type AssetTransaction @entity {
   id: ID!
-  stashAccount: String @index(unique: false)
-  nftId: Nft @index(unique: false)
+  stashAccount: String! @index(unique: false)
+  nftId: String! @index(unique: false)
   timestampInSecond: Int!
   amount: BigInt!
 }

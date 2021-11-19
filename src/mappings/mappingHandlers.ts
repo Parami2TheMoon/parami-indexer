@@ -63,24 +63,24 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
  * @param event 		data: 		Transferred(T::AssetId, T::AccountId, T::AccountId, T::Balance)
  */
  export async function handleAssetTransferred(event: SubstrateEvent): Promise<void> {
-    logger.info(`mappingHandler got a AssetIssued event: ${JSON.stringify(event.toHuman())}` );  
+    logger.info(`handleAssetTransferred got event: ${JSON.stringify(event.toHuman())}` );  
     const {event: {data: [assetId, fromAccountId, toAccountId, balance]}} = event;
     
-    const txnOfFromAccount = new AssetTransaction(new Date().getMilliseconds().toString());
-    txnOfFromAccount.nftIdId = assetId.toHuman() as string;
-    txnOfFromAccount.stashAccount = fromAccountId.toHuman() as string;
-    txnOfFromAccount.amount = BigInt(balance.toString());
+    const txnOfFromAccount = new AssetTransaction(guid());
+    txnOfFromAccount.nftId = assetId.toString();
+    txnOfFromAccount.stashAccount = fromAccountId.toString();
+    txnOfFromAccount.amount = BigInt(balance.toString().replace(/,/g,''));
     txnOfFromAccount.timestampInSecond = Math.floor(Date.now() / 1000);
     await txnOfFromAccount.save(); 
-    logger.info(`AssetTransaction of transfer saved success for from account: ${JSON.stringify(txnOfFromAccount)}`);  
+    logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(txnOfFromAccount.stashAccount)}`);  
 
-    const txnToAccount = new AssetTransaction(new Date().getMilliseconds().toString());
-    txnToAccount.nftIdId = assetId.toHuman() as string;
-    txnToAccount.stashAccount = toAccountId.toHuman() as string;
-    txnToAccount.amount = BigInt(balance.toString());
+    const txnToAccount = new AssetTransaction(guid());
+    txnToAccount.nftId = assetId.toString();
+    txnToAccount.stashAccount = toAccountId.toString();
+    txnToAccount.amount = BigInt(balance.toString().replace(/,/g,''));
     txnToAccount.timestampInSecond = Math.floor(Date.now() / 1000);
     await txnToAccount.save(); 
-    logger.info(`AssetTransaction of transfer saved success for to account: ${JSON.stringify(txnToAccount)}`); 
+    logger.info(`handleAssetTransferred saved success for to account: ${JSON.stringify(txnToAccount.stashAccount)}`); 
 }
 
 /**
@@ -90,10 +90,10 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
  export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
     logger.info(`mappingHandler got a AssetBurned event: ${JSON.stringify(event.toHuman())}` );  
     const {event: {data: [assetId, accountId, balance]}} = event;
-    const assetTransaction = new AssetTransaction(new Date().getMilliseconds().toString());
-    assetTransaction.nftIdId = assetId.toHuman() as string;
-    assetTransaction.stashAccount = accountId.toHuman() as string;
-    assetTransaction.amount = BigInt(balance.toString().replace(',', ''));
+    const assetTransaction = new AssetTransaction(guid());
+    assetTransaction.nftId = assetId.toString();
+    assetTransaction.stashAccount = accountId.toString();
+    assetTransaction.amount = BigInt(balance.toString().replace(/,/g,''));
     assetTransaction.timestampInSecond = Math.floor(Date.now() / 1000);
     await assetTransaction.save(); 
     logger.info(`AssetTransaction for burned saved success: ${JSON.stringify(assetTransaction)}` );  
@@ -106,7 +106,7 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
     const ad3Transaction = new Ad3Transaction(guid());
     ad3Transaction.fromStashAccount = from.toString();
     ad3Transaction.toStashAccount = to.toString();
-    const valueAfterReplace = value.toHuman().toString().replace(',', '');
+    const valueAfterReplace = value.toHuman().toString().replace(/,/g,'');;
     logger.info(`handleAd3Transaction, got amount = ${valueAfterReplace}`)
     ad3Transaction.amount = BigInt(valueAfterReplace);
     ad3Transaction.timestampInSecond = Math.floor(Date.now() / 1000);
