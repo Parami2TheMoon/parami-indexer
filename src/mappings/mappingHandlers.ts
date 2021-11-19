@@ -46,5 +46,6 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     advertisementReward.refererId= referer.toString();
     advertisementReward.visitorId= visitor.toString();
     advertisementReward.nftIdId = nft.toString();
+    advertisementReward.timestampInSecond = Date.now()/1000;
     await advertisementReward.save();
 }
