@@ -51,9 +51,9 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     const advertisementReward = new AdvertisementReward(id.toString() + reward.toString());
     advertisementReward.reward = BigInt(reward.toString());
     advertisementReward.award = BigInt(award.toString());
-    advertisementReward.refererId = referer.toString();
-    advertisementReward.visitorId = visitor.toString();
-    advertisementReward.nftIdId = nft.toString();
+    advertisementReward.refererDid = referer.toString();
+    advertisementReward.visitorDid = visitor.toString();
+    advertisementReward.nftId = nft.toString();
     advertisementReward.timestampInSecond = Math.floor(Date.now() / 1000);
     await advertisementReward.save();
 }
@@ -118,7 +118,7 @@ export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<
     logger.info(`handleAdvertisement got a Paid event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [id, did, value] } } = event;
     const advertisement = new Advertisement(id.toString());
-    advertisement.budgetInAd3 = Number(value.toString());
+    advertisement.budgetInAd3 = BigInt(value.toString().replace(/,/g,''));
     advertisement.advertiserId = did.toString();
     advertisement.timestampInSecond = Math.floor(Date.now() / 1000);
     await advertisement.save();

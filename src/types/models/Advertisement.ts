@@ -12,7 +12,7 @@ export class Advertisement implements Entity {
 
     public id: string;
 
-    public budgetInAd3: number;
+    public budgetInAd3: bigint;
 
     public advertiserId: string;
 

@@ -12,15 +12,15 @@ export class AdvertisementReward implements Entity {
 
     public id: string;
 
-    public advertisementIdId: string;
+    public advertisementId?: string;
 
-    public nftIdId: string;
+    public nftId: string;
 
-    public visitorId: string;
+    public visitorDid: string;
 
     public reward: bigint;
 
-    public refererId: string;
+    public refererDid: string;
 
     public award: bigint;
 
@@ -48,30 +48,23 @@ export class AdvertisementReward implements Entity {
     }
 
 
-    static async getByAdvertisementIdId(advertisementIdId: string): Promise<AdvertisementReward[] | undefined>{
+    static async getByAdvertisementId(advertisementId: string): Promise<AdvertisementReward[] | undefined>{
       
-      const records = await store.getByField('AdvertisementReward', 'advertisementIdId', advertisementIdId);
+      const records = await store.getByField('AdvertisementReward', 'advertisementId', advertisementId);
       return records.map(record => AdvertisementReward.create(record));
       
     }
 
-    static async getByNftIdId(nftIdId: string): Promise<AdvertisementReward[] | undefined>{
+    static async getByVisitorDid(visitorDid: string): Promise<AdvertisementReward[] | undefined>{
       
-      const records = await store.getByField('AdvertisementReward', 'nftIdId', nftIdId);
+      const records = await store.getByField('AdvertisementReward', 'visitorDid', visitorDid);
       return records.map(record => AdvertisementReward.create(record));
       
     }
 
-    static async getByVisitorId(visitorId: string): Promise<AdvertisementReward[] | undefined>{
+    static async getByRefererDid(refererDid: string): Promise<AdvertisementReward[] | undefined>{
       
-      const records = await store.getByField('AdvertisementReward', 'visitorId', visitorId);
-      return records.map(record => AdvertisementReward.create(record));
-      
-    }
-
-    static async getByRefererId(refererId: string): Promise<AdvertisementReward[] | undefined>{
-      
-      const records = await store.getByField('AdvertisementReward', 'refererId', refererId);
+      const records = await store.getByField('AdvertisementReward', 'refererDid', refererDid);
       return records.map(record => AdvertisementReward.create(record));
       
     }
