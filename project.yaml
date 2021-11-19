@@ -16,8 +16,17 @@ dataSources:
     mapping:
       file: ./dist/index.js
       handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler 
         - handler: handleDidAssigned
           kind: substrate/EventHandler
           filter:
-            module: Did
-            method: *
+            module: balances
+            method: Transfer
+        - handler: handleTimestampSet
+          kind: substrate/CallHandler
+          filter:
+            module: timestamp
+            method: set
+        - handler: handleBlock
+          kind: substrate/BlockHandler 

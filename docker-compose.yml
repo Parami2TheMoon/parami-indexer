@@ -22,9 +22,9 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
     volumes:
-      - ./:/app
+      - ./:/parami-scaner
     command:
-      - -f=/app
+      - -f=/parami-scaner
       - --local
 
   graphql-engine:
@@ -42,6 +42,6 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
     command:
-      - --name=app
+      - --name=parami-scaner
       - --playground
       - --indexer=http://subquery-node:3000
