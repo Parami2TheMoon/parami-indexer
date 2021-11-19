@@ -12,13 +12,14 @@ type AssetTransaction @entity {
 }
 
 type AdvertisementReward @entity {
-  id: ID!
-  toDid: Did! @index(unique: false)
-  advertisementId: Advertisement! @index(unique: false)
-  nftId: Nft!
-  rewardType: Boolean!  #view/forward
-  amount: Float!
-  timestampInSecond: Int!
+  id: ID!
+  advertisementId: Advertisement! @index(unique: false)
+  nftId: Nft!
+  visitor: Did! @index(unique: false)
+  reward: Float!
+  referer: Did!
+  award: Float!
+  timestampInSecond: Int!
 }
 
 type Nft @entity {
