@@ -1,9 +1,6 @@
 import { SubstrateExtrinsic, SubstrateEvent, SubstrateBlock } from "@subql/types";
-import { Balance } from "@polkadot/types/interfaces";
-import { Did } from "../types/models/Did";
-import { Nft } from "../types/models/Nft";
-import { AdvertisementReward } from "../types/models/AdvertisementReward";
-import { Ad3Transaction } from "../types/models/Ad3Transaction";
+//import { Balance } from "@polkadot/types/interfaces";
+import { Nft, Did, AdvertisementReward, Advertisement, Ad3Transaction } from "../types";
 
 function guid() {
     function S4() {
@@ -56,7 +53,7 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     await advertisementReward.save();
 }
 
-
+//balance.Transfer
 export async function handleAd3Transaction(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAd3Transaction got a Paid event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [from, to, value] } } = event;
@@ -66,4 +63,15 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
     ad3Transaction.amount = Number(value.toString());
     ad3Transaction.timestampInSecond = Date.now() / 1000;
     await ad3Transaction.save();
+}
+
+//ad.Deposited
+export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<void> {
+    logger.info(`handleAdvertisement got a Paid event: ${JSON.stringify(event.toHuman())}`);
+    const { event: { data: [id, did, value] } } = event;
+    const advertisement = new Advertisement(id.toString());
+    advertisement.budgetInAd3 = Number(value.toString());
+    advertisement.advertiserId = did.toString();
+    advertisement.timestampInSecond = Date.now() / 1000;
+    await advertisement.save();
 }

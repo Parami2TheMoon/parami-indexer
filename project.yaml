@@ -43,3 +43,8 @@ dataSources:
           filter:
             module: balance
             method: Transfer
+        - handler: handleAdvertisementCreate
+          kind: substrate/EventHandler
+          filter:
+            module: ad
+            method: Deposited

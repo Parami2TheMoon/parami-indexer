@@ -37,8 +37,8 @@ type NftCurAdvertisement @entity {
 type Advertisement @entity {
   id: ID!
   budgetInAd3: Int!
-  nft: Nft!
   advertiser: Did!
+  timestampInSecond: Int!
 }
 
 type Ad3Transaction @entity {
