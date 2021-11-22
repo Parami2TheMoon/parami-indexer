@@ -85,7 +85,6 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     tx.fromDid = await getDid(fromDid.toString());
     tx.toDid = await getDid(toDid.toString());
 
-    logger.error(`handleAssetTransferred getDid error: ${e.message}`);
 
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
     tx.timestampInSecond = Math.floor(Date.now() / 1000);
@@ -106,8 +105,6 @@ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
 
     assetTransaction.fromDid = await getDid(accountId.toString());
 
-    logger.error(`handleAssetBurned getDid error: ${e.message}`);
-
     assetTransaction.toDid = "black hole";
     assetTransaction.amount = BigInt(balance.toString().replace(/,/g, ''));
     assetTransaction.timestampInSecond = Math.floor(Date.now() / 1000);
@@ -123,13 +120,10 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
     const tx = new AssetTransaction(guid());
     tx.assetId = 'AD3';
     tx.assetSymbol = 'AD3';
-    try {
-        tx.fromDid = await getDid(fromDid.toString());
-        tx.toDid = await getDid(toDid.toString());
-    } catch (e) {
-        logger.error(`handleAssetTransferred getDid error: ${e.message}`);
-        return;
-    }
+
+    tx.fromDid = await getDid(fromDid.toString());
+    tx.toDid = await getDid(toDid.toString());
+
     const valueAfterReplace = value.toHuman().toString().replace(/,/g, '');;
     logger.info(`handleAd3Transaction, got amount = ${valueAfterReplace}`)
     tx.amount = BigInt(valueAfterReplace);
