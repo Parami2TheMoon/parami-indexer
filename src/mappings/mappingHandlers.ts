@@ -1,13 +1,9 @@
 import { SubstrateExtrinsic, SubstrateEvent, SubstrateBlock } from "@subql/types";
 //import { Balance } from "@polkadot/types/interfaces";
-import { Nft, Did, AdvertisementReward, Advertisement, Ad3Transaction } from "../types";
-import {Balance} from "@polkadot/types/interfaces";
+import { Asset, Did, AdvertisementReward, Advertisement } from "../types";
+import { Balance } from "@polkadot/types/interfaces";
 import { AssetTransaction } from "../types";
 import { Data } from "@polkadot/types";
-
-function replaceAll(str: string, find: string, replace: string) {
-    return str.replace(new RegExp(find, 'g'), replace);
-}
 
 function guid() {
     function S4() {
@@ -15,6 +11,19 @@ function guid() {
     }
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
+
+async function getDid(stashAccount: string) {
+    const did = await Did.getByStashAccount(stashAccount);
+    if (did.length === 0) {
+        throw new Error("No DID found for stash account: " + stashAccount);
+    }
+    return did[0].id;
+}
+async function getSymbol(assetId:string) {
+    const asset = await Asset.get(assetId);
+    return asset.symbol;
+}
+
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
     logger.debug("mappingHandler got a block: ", block.block.header.number.toNumber());
 }
@@ -27,90 +36,109 @@ export async function handleDidAssigned(event: SubstrateEvent): Promise<void> {
     const { event: { data: [did, stashAccount] } } = event;
     const record = new Did(did.toHuman() as string);
     record.stashAccount = stashAccount.toString();
-    await record.save();
+    record.save();
 }
 
 /**
  * 
- * @param event event: {"phase":{"ApplyExtrinsic":"1"},"event":{"method":"Backed","section":"nft","index":"0x2900","data":["0x377e68a483a3db3b23bca8d38bed464684354da0","0xa83486388d5776f8adeb739d97c75e9780209ce0","1,000,000,000,000,000,000,000"]},"topics":[]}
+ * @param event event: {"phase":{"ApplyExtrinsic":"1"},"event":{"method":"Backed","section":"Asset","index":"0x2900","data":["0x377e68a483a3db3b23bca8d38bed464684354da0","0xa83486388d5776f8adeb739d97c75e9780209ce0","1,000,000,000,000,000,000,000"]},"topics":[]}
  * 
  * data format:         Minted(T::DecentralizedId, T::AssetId, T::AssetId, BalanceOf<T>)
  */
-export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
-    logger.info(`mappingHandler got a NftMinted event: ${JSON.stringify(event.toHuman())}`);
-    const { event: { data: [did, assetId, _, mintedAmount] } } = event;
-    const nft = new Nft(assetId.toString());
-    nft.ownerDid = did.toString();
-    await nft.save();
-    logger.info(`nft saved success: ${JSON.stringify(nft)}` );  
+export async function handleAssetMinted(event: SubstrateEvent): Promise<void> {
+    logger.info(`mappingHandler got a AssetMinted event: ${JSON.stringify(event.toHuman())}`);
+    const { event: { data: [did, assetId, _, name, symbol, mintedAmount] } } = event;
+    const asset = new Asset(assetId.toString());
+    asset.ownerDid = did.toString();
+    asset.name = name.toString();
+    asset.symbol = symbol.toString();
+    asset.amount = BigInt(mintedAmount.toString().replace(/,/g, ''));
+    asset.save();
 }
 
 export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAdPayout got a Paid event: ${JSON.stringify(event.toHuman())}`);
-    const { event: { data: [id, nft, visitor, reward, referer, award] } } = event;
+    const { event: { data: [id, assetId, visitor, reward, referer, award] } } = event;
     const advertisementReward = new AdvertisementReward(id.toString() + reward.toString());
     advertisementReward.reward = BigInt(reward.toString());
     advertisementReward.award = BigInt(award.toString());
     advertisementReward.refererDid = referer.toString();
     advertisementReward.visitorDid = visitor.toString();
-    advertisementReward.nftId = nft.toString();
+    advertisementReward.assetId = assetId.toString();
     advertisementReward.timestampInSecond = Math.floor(Date.now() / 1000);
-    await advertisementReward.save();
+    advertisementReward.save().then(() => {
+        logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(advertisementReward.visitorDid)}`);
+    });
 }
 
 /**
  * 
  * @param event 		data: 		Transferred(T::AssetId, T::AccountId, T::AccountId, T::Balance)
  */
- export async function handleAssetTransferred(event: SubstrateEvent): Promise<void> {
-    logger.info(`handleAssetTransferred got event: ${JSON.stringify(event.toHuman())}` );  
-    const {event: {data: [assetId, fromAccountId, toAccountId, balance]}} = event;
-    
-    const txnOfFromAccount = new AssetTransaction(guid());
-    txnOfFromAccount.nftId = assetId.toString();
-    txnOfFromAccount.stashAccount = fromAccountId.toString();
-    txnOfFromAccount.amount = BigInt(balance.toString().replace(/,/g,''));
-    txnOfFromAccount.timestampInSecond = Math.floor(Date.now() / 1000);
-    await txnOfFromAccount.save(); 
-    logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(txnOfFromAccount.stashAccount)}`);  
-
-    const txnToAccount = new AssetTransaction(guid());
-    txnToAccount.nftId = assetId.toString();
-    txnToAccount.stashAccount = toAccountId.toString();
-    txnToAccount.amount = BigInt(balance.toString().replace(/,/g,''));
-    txnToAccount.timestampInSecond = Math.floor(Date.now() / 1000);
-    await txnToAccount.save(); 
-    logger.info(`handleAssetTransferred saved success for to account: ${JSON.stringify(txnToAccount.stashAccount)}`); 
+export async function handleAssetTransferred(event: SubstrateEvent): Promise<void> {
+    logger.info(`handleAssetTransferred got event: ${JSON.stringify(event.toHuman())}`);
+    const { event: { data: [assetId, fromDid, toDid, balance] } } = event;
+    const tx = new AssetTransaction(guid());
+    tx.assetId = assetId.toString();
+    tx.assetSymbol =await getSymbol(tx.assetId);
+    try {
+        tx.fromDid = await getDid(fromDid.toString());
+        tx.toDid = await getDid(toDid.toString());
+    } catch (e) {
+        logger.error(`handleAssetTransferred getDid error: ${e.message}`);
+        return;
+    }
+    tx.amount = BigInt(balance.toString().replace(/,/g, ''));
+    tx.timestampInSecond = Math.floor(Date.now() / 1000);
+    tx.save().then(() => {
+        logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(tx.fromDid)}`);
+    });
 }
 
 /**
  * 
  * @param event 		data: 		Burned(T::AssetId, T::AccountId, T::Balance),
  */
- export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
-    logger.info(`mappingHandler got a AssetBurned event: ${JSON.stringify(event.toHuman())}` );  
-    const {event: {data: [assetId, accountId, balance]}} = event;
+export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
+    logger.info(`mappingHandler got a AssetBurned event: ${JSON.stringify(event.toHuman())}`);
+    const { event: { data: [assetId, accountId, balance] } } = event;
     const assetTransaction = new AssetTransaction(guid());
-    assetTransaction.nftId = assetId.toString();
-    assetTransaction.stashAccount = accountId.toString();
-    assetTransaction.amount = BigInt(balance.toString().replace(/,/g,''));
+    assetTransaction.assetId = assetId.toString();
+    try {
+        assetTransaction.fromDid = await getDid(accountId.toString());
+    } catch (e) {
+        logger.error(`handleAssetBurned getDid error: ${e.message}`);
+        return;
+    }
+    assetTransaction.toDid = "black hole";
+    assetTransaction.amount = BigInt(balance.toString().replace(/,/g, ''));
     assetTransaction.timestampInSecond = Math.floor(Date.now() / 1000);
-    await assetTransaction.save(); 
-    logger.info(`AssetTransaction for burned saved success: ${JSON.stringify(assetTransaction)}` );  
+    assetTransaction.save().then(() => {
+        logger.info(`handleAssetBurned saved success for account: ${JSON.stringify(assetTransaction.fromDid)}`);
+    });
 }
 
 //balance.Transfer
 export async function handleAd3Transaction(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAd3Transaction got a Paid event: ${JSON.stringify(event.toHuman())}`);
-    const { event: { data: [from, to, value] } } = event;
-    const ad3Transaction = new Ad3Transaction(guid());
-    ad3Transaction.fromStashAccount = from.toString();
-    ad3Transaction.toStashAccount = to.toString();
-    const valueAfterReplace = value.toHuman().toString().replace(/,/g,'');;
+    const { event: { data: [fromDid, toDid, value] } } = event;
+    const tx = new AssetTransaction(guid());
+    tx.assetId = 'AD3';
+    tx.assetSymbol = 'AD3';
+    try {
+        tx.fromDid = await getDid(fromDid.toString());
+        tx.toDid = await getDid(toDid.toString());
+    } catch (e) {
+        logger.error(`handleAssetTransferred getDid error: ${e.message}`);
+        return;
+    }
+    const valueAfterReplace = value.toHuman().toString().replace(/,/g, '');;
     logger.info(`handleAd3Transaction, got amount = ${valueAfterReplace}`)
-    ad3Transaction.amount = BigInt(valueAfterReplace);
-    ad3Transaction.timestampInSecond = Math.floor(Date.now() / 1000);
-    await ad3Transaction.save();
+    tx.amount = BigInt(valueAfterReplace);
+    tx.timestampInSecond = Math.floor(Date.now() / 1000);
+    tx.save().then(() => {
+        logger.info(`handleAd3Transaction saved success for from account: ${JSON.stringify(tx.fromDid)}`);
+    });
 }
 
 //ad.Deposited
@@ -118,7 +146,7 @@ export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<
     logger.info(`handleAdvertisement got a Paid event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [id, did, value] } } = event;
     const advertisement = new Advertisement(id.toString());
-    advertisement.budgetInAd3 = BigInt(value.toString().replace(/,/g,''));
+    advertisement.budgetInAd3 = BigInt(value.toString().replace(/,/g, ''));
     advertisement.advertiserId = did.toString();
     advertisement.timestampInSecond = Math.floor(Date.now() / 1000);
     await advertisement.save();

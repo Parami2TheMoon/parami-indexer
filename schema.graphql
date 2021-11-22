@@ -2,19 +2,26 @@ type Did @entity {
   id: ID!
   stashAccount: String! @index(unique: false)
 }
-
-type AssetTransaction @entity {
+type Asset @entity {
   id: ID!
-  stashAccount: String! @index(unique: false)
-  nftId: String! @index(unique: false)
-  timestampInSecond: Int!
+  ownerDid: String! @index(unique: false)
+  name: String!
+  symbol: String!
   amount: BigInt!
 }
-
+type AssetTransaction @entity {
+  id: ID!
+  assetId: String! @index(unique: false)
+  assetSymbol: String!
+  fromDid: String! @index(unique: false)
+  toDid: String! @index(unique: false)
+  amount: BigInt!
+  timestampInSecond: Int!
+}
 type AdvertisementReward @entity {
   id: ID!
   advertisementId: String @index(unique: false)
-  nftId: String!
+  assetId: String!
   visitorDid: String! @index(unique: false)
   reward: BigInt!
   refererDid: String! @index(unique: false)
@@ -22,17 +29,11 @@ type AdvertisementReward @entity {
   timestampInSecond: Int!
 }
 
-type Nft @entity {
-  id: ID!
-  ownerDid: String! @index(unique: false)
-}
-
-type NftCurAdvertisement @entity {
-  id: ID!
-  nft: Nft!
-  advertisement: Advertisement!
-}
-
+# type NftCurAdvertisement @entity {
+#   id: ID!
+#   nft: Nft!
+#   advertisement: Advertisement!
+# }
 type Advertisement @entity {
   id: ID!
   budgetInAd3: BigInt!
@@ -40,10 +41,3 @@ type Advertisement @entity {
   timestampInSecond: Int!
 }
 
-type Ad3Transaction @entity {
-  id: ID!
-  fromStashAccount: String! @index(unique: false)
-  toStashAccount: String! @index(unique: false)
-  amount: BigInt!
-  timestampInSecond: Int!
-}
