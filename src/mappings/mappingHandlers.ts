@@ -15,11 +15,11 @@ function guid() {
 async function getDid(stashAccount: string) {
     const did = await Did.getByStashAccount(stashAccount);
     if (did.length === 0) {
-        throw new Error("No DID found for stash account: " + stashAccount);
+        return stashAccount;
     }
     return did[0].id;
 }
-async function getSymbol(assetId:string) {
+async function getSymbol(assetId: string) {
     const asset = await Asset.get(assetId);
     return asset.symbol;
 }
@@ -80,14 +80,13 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     const { event: { data: [assetId, fromDid, toDid, balance] } } = event;
     const tx = new AssetTransaction(guid());
     tx.assetId = assetId.toString();
-    tx.assetSymbol =await getSymbol(tx.assetId);
-    try {
-        tx.fromDid = await getDid(fromDid.toString());
-        tx.toDid = await getDid(toDid.toString());
-    } catch (e) {
-        logger.error(`handleAssetTransferred getDid error: ${e.message}`);
-        return;
-    }
+    tx.assetSymbol = await getSymbol(tx.assetId);
+
+    tx.fromDid = await getDid(fromDid.toString());
+    tx.toDid = await getDid(toDid.toString());
+
+    logger.error(`handleAssetTransferred getDid error: ${e.message}`);
+
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
     tx.timestampInSecond = Math.floor(Date.now() / 1000);
     tx.save().then(() => {
@@ -104,12 +103,11 @@ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
     const { event: { data: [assetId, accountId, balance] } } = event;
     const assetTransaction = new AssetTransaction(guid());
     assetTransaction.assetId = assetId.toString();
-    try {
-        assetTransaction.fromDid = await getDid(accountId.toString());
-    } catch (e) {
-        logger.error(`handleAssetBurned getDid error: ${e.message}`);
-        return;
-    }
+
+    assetTransaction.fromDid = await getDid(accountId.toString());
+
+    logger.error(`handleAssetBurned getDid error: ${e.message}`);
+
     assetTransaction.toDid = "black hole";
     assetTransaction.amount = BigInt(balance.toString().replace(/,/g, ''));
     assetTransaction.timestampInSecond = Math.floor(Date.now() / 1000);
