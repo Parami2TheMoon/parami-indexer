@@ -81,11 +81,9 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     const tx = new AssetTransaction(guid());
     tx.assetId = assetId.toString();
     tx.assetSymbol = await getSymbol(tx.assetId);
-
+    tx.block = event.block.block.hash.toString();
     tx.fromDid = await getDid(fromDid.toString());
     tx.toDid = await getDid(toDid.toString());
-
-
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
     tx.timestampInSecond = Math.floor(Date.now() / 1000);
     tx.save().then(() => {
@@ -100,16 +98,16 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
 export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
     logger.info(`mappingHandler got a AssetBurned event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [assetId, accountId, balance] } } = event;
-    const assetTransaction = new AssetTransaction(guid());
-    assetTransaction.assetId = assetId.toString();
+    const tx = new AssetTransaction(guid());
+    tx.assetId = assetId.toString();
 
-    assetTransaction.fromDid = await getDid(accountId.toString());
-
-    assetTransaction.toDid = "black hole";
-    assetTransaction.amount = BigInt(balance.toString().replace(/,/g, ''));
-    assetTransaction.timestampInSecond = Math.floor(Date.now() / 1000);
-    assetTransaction.save().then(() => {
-        logger.info(`handleAssetBurned saved success for account: ${JSON.stringify(assetTransaction.fromDid)}`);
+    tx.fromDid = await getDid(accountId.toString());
+    tx.block = event.block.block.hash.toString();
+    tx.toDid = "burned";
+    tx.amount = BigInt(balance.toString().replace(/,/g, ''));
+    tx.timestampInSecond = Math.floor(Date.now() / 1000);
+    tx.save().then(() => {
+        logger.info(`handleAssetBurned saved success for account: ${JSON.stringify(tx.fromDid)}`);
     });
 }
 
@@ -120,7 +118,7 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
     const tx = new AssetTransaction(guid());
     tx.assetId = 'AD3';
     tx.assetSymbol = 'AD3';
-
+    tx.block = event.block.block.hash.toString();
     tx.fromDid = await getDid(fromDid.toString());
     tx.toDid = await getDid(toDid.toString());
 
