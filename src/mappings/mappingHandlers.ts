@@ -59,7 +59,7 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
 export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAdPayout got a Paid event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [id, assetId, visitor, reward, referer, award] } } = event;
-    const advertisementReward = new AdvertisementReward(id.toString() + reward.toString());
+    const advertisementReward = new AdvertisementReward(id.toString());
     advertisementReward.reward = BigInt(reward.toString());
     advertisementReward.award = BigInt(award.toString());
     advertisementReward.refererDid = referer.toString();
