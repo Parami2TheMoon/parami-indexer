@@ -45,7 +45,7 @@ export async function handleDidAssigned(event: SubstrateEvent): Promise<void> {
  * 
  * data format:         Minted(T::DecentralizedId, T::AssetId, T::AssetId, BalanceOf<T>)
  */
-export async function handleAssetMinted(event: SubstrateEvent): Promise<void> {
+export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
     logger.info(`mappingHandler got a AssetMinted event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [did, assetId, _, name, symbol, mintedAmount] } } = event;
     const asset = new Asset(assetId.toString());
