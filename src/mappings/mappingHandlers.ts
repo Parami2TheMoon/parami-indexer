@@ -84,7 +84,9 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     advertisementBudget.assetId=advertisementReward.assetId;
     advertisementBudget.timestampInSecond=advertisementReward.timestampInSecond;
     getOwnerDid(advertisementReward.assetId).then(ownerDid=>{
+        logger.info(`getOwnerDid : ${ownerDid}`);
         getCurrentRemainOfSlot(ownerDid).then(slotInfo=>{
+            logger.info(`getCurrentRemainOfSlot : ${slotInfo}`);
             advertisementBudget.remain=slotInfo.remain.replace(/,/g, '');
             advertisementBudget.save().then(()=>{
                 logger.info(`advertisementBudget saved success for from ad remain: ${slotInfo.remain}`);
