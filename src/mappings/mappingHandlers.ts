@@ -50,8 +50,8 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
     const { event: { data: [did, assetId, _, name, symbol, mintedAmount] } } = event;
     const asset = new Asset(assetId.toString());
     asset.ownerDid = did.toString();
-    asset.name = name.toString();
-    asset.symbol = symbol.toString();
+    asset.name = name.toHuman().toString();
+    asset.symbol = symbol.toHuman().toString();
     asset.amount = BigInt(mintedAmount.toString().replace(/,/g, ''));
     asset.save();
 }
