@@ -1,6 +1,6 @@
 import { SubstrateExtrinsic, SubstrateEvent, SubstrateBlock } from "@subql/types";
 //import { Balance } from "@polkadot/types/interfaces";
-import { Asset, Did, AdvertisementReward, Advertisement } from "../types";
+import { Asset, Did, AdvertisementReward, Advertisement, AdvertisementBudget } from "../types";
 import { Balance } from "@polkadot/types/interfaces";
 import { AssetTransaction } from "../types";
 import { Data } from "@polkadot/types";
@@ -11,7 +11,13 @@ function guid() {
     }
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
-
+async function getCurrentRemainOfSlot(kol: string) {
+    const slot = await api.query.ad.slotOf(kol);
+    if (slot.isEmpty) {
+        return null;
+    }
+    const res = slot.toHuman() as any;
+}
 async function getDid(stashAccount: string) {
     const did = await Did.getByStashAccount(stashAccount);
     if (did.length === 0) {
@@ -23,7 +29,10 @@ async function getSymbol(assetId: string) {
     const asset = await Asset.get(assetId);
     return asset.symbol;
 }
-
+async function getOwnerDid(assetId: string) {
+    const asset = await Asset.get(assetId);
+    return asset.ownerDid;
+}
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
     logger.debug("mappingHandler got a block: ", block.block.header.number.toNumber());
 }
@@ -59,7 +68,8 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
 export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAdPayout got a Paid event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [id, assetId, visitor, reward, referer, award] } } = event;
-    const advertisementReward = new AdvertisementReward(id.toString());
+    const advertisementReward = new AdvertisementReward(guid());
+    advertisementReward.advertisementId = id.toString();
     advertisementReward.reward = BigInt(reward.toString());
     advertisementReward.award = BigInt(award.toString());
     advertisementReward.refererDid = referer.toString();
@@ -68,6 +78,18 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     advertisementReward.timestampInSecond = Math.floor(event.block.block.header.number.toNumber() *6);
     advertisementReward.save().then(() => {
         logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(advertisementReward.visitorDid)}`);
+    });
+    const advertisementBudget=new AdvertisementBudget(guid());
+    advertisementBudget.advertisementId=advertisementReward.advertisementId;
+    advertisementBudget.assetId=advertisementReward.assetId;
+    advertisementBudget.timestampInSecond=advertisementReward.timestampInSecond;
+    getOwnerDid(advertisementReward.assetId).then(ownerDid=>{
+        getCurrentRemainOfSlot(ownerDid).then(remain=>{
+            advertisementBudget.remain=remain;
+            advertisementBudget.save().then(()=>{
+                logger.info(`advertisementBudget saved success for from ad remain: ${remain}`);
+            });
+        });
     });
 }
 
@@ -141,4 +163,13 @@ export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<
     advertisement.timestampInSecond = Math.floor(event.block.block.header.number.toNumber() *6);
     await advertisement.save();
 }
-
+// ad.slotOf: Option<ParamiAdSlot>
+// {
+//   nft: 0
+//   budget: 20,000,000,000,000,000,000
+//   remain: 18,000,000,000,000,000,000
+//   tokens: 1,989,981,876,438,381,866,558
+//   deadline: 43,377
+//   created: 177
+//   ad: 0x3091130280355378191cfc607dc6df4f18e536f7907fb9cd550a4f25c2673d6a
+// }

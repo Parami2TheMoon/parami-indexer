@@ -29,7 +29,13 @@ type AdvertisementReward @entity {
   award: BigInt!
   timestampInSecond: Int!
 }
-
+type AdvertisementBudget @entity {
+  id: ID!
+  advertisementId: String @index(unique: false)
+  assetId: String! @index(unique: false)
+  remain: BigInt!
+  timestampInSecond: Int!
+}
 # type NftCurAdvertisement @entity {
 #   id: ID!
 #   nft: Nft!
