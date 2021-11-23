@@ -32,8 +32,15 @@ type AdvertisementReward @entity {
 type AdvertisementBudget @entity {
   id: ID!
   advertisementId: String @index(unique: false)
-  assetId: String! @index(unique: false)
+  kolDid: String! @index(unique: false)
   remain: BigInt!
+  timestampInSecond: Int!
+}
+type AdvertisementBid @entity {
+  id: ID!
+  advertisementId: String @index(unique: false)
+  kolDid: String! @index(unique: false)
+  amount: BigInt!
   timestampInSecond: Int!
 }
 # type NftCurAdvertisement @entity {

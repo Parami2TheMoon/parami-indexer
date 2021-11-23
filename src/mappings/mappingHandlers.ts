@@ -1,6 +1,6 @@
 import { SubstrateExtrinsic, SubstrateEvent, SubstrateBlock } from "@subql/types";
 //import { Balance } from "@polkadot/types/interfaces";
-import { Asset, Did, AdvertisementReward, Advertisement, AdvertisementBudget } from "../types";
+import { Asset, Did, AdvertisementReward, Advertisement, AdvertisementBudget, AdvertisementBid } from "../types";
 import { Balance } from "@polkadot/types/interfaces";
 import { AssetTransaction } from "../types";
 import { Data } from "@polkadot/types";
@@ -11,13 +11,7 @@ function guid() {
     }
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
-async function getCurrentRemainOfSlot(kol: string) {
-    const slot = await api.query.ad.slotOf(kol);
-    if (slot.isEmpty) {
-        return null;
-    }
-    const res = slot.toHuman() as any;
-}
+
 async function getDid(stashAccount: string) {
     const did = await Did.getByStashAccount(stashAccount);
     if (did.length === 0) {
@@ -78,20 +72,6 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     advertisementReward.timestampInSecond = Math.floor(event.block.block.header.number.toNumber() *6);
     advertisementReward.save().then(() => {
         logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(advertisementReward.visitorDid)}`);
-    });
-    const advertisementBudget=new AdvertisementBudget(guid());
-    advertisementBudget.advertisementId=advertisementReward.advertisementId;
-    advertisementBudget.assetId=advertisementReward.assetId;
-    advertisementBudget.timestampInSecond=advertisementReward.timestampInSecond;
-    getOwnerDid(advertisementReward.assetId).then(ownerDid=>{
-        logger.info(`getOwnerDid : ${ownerDid}`);
-        getCurrentRemainOfSlot(ownerDid).then(slotInfo=>{
-            logger.info(`getCurrentRemainOfSlot : ${slotInfo}`);
-            advertisementBudget.remain=slotInfo.remain.replace(/,/g, '');
-            advertisementBudget.save().then(()=>{
-                logger.info(`advertisementBudget saved success for from ad remain: ${slotInfo.remain}`);
-            });
-        });
     });
 }
 
@@ -163,8 +143,31 @@ export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<
     advertisement.budgetInAd3 = BigInt(value.toString().replace(/,/g, ''));
     advertisement.advertiserId = did.toString();
     advertisement.timestampInSecond = Math.floor(event.block.block.header.number.toNumber() *6);
-    await advertisement.save();
+    advertisement.save();
 }
+export async function handleAdvertisementBid(event: SubstrateEvent): Promise<void> {
+    const { event: { data: [kol, id, value] } } = event;
+    const advertisementBid = new AdvertisementBid(guid());
+    advertisementBid.kolDid = kol.toString();
+    advertisementBid.advertisementId = id.toString();
+    advertisementBid.amount = BigInt(value.toString().replace(/,/g, ''));
+    advertisementBid.timestampInSecond = Math.floor(event.block.block.header.number.toNumber() *6);
+    await advertisementBid.save().then(() => {
+        logger.info(`handleAdvertisementBid handled a bid event: ${JSON.stringify(event.toHuman())}`);
+    });
+}
+export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<void> {
+    const { event: { data: [id,kol, value] } } = event;
+    const advertisementBudget = new AdvertisementBudget(guid());
+    advertisementBudget.kolDid = kol.toString();
+    advertisementBudget.advertisementId = id.toString();
+    advertisementBudget.remain = BigInt(value.toString().replace(/,/g, ''));
+    advertisementBudget.timestampInSecond = Math.floor(event.block.block.header.number.toNumber() *6);
+    await advertisementBudget.save().then(() => {
+        logger.info(`handleSlotRemainChanged handled a bid event: ${JSON.stringify(event.toHuman())}`);
+    });
+}
+//ad.Bid
 // ad.slotOf: Option<ParamiAdSlot>
 // {
 //   nft: 0

@@ -41,6 +41,16 @@ dataSources:
           filter:
             module: ad
             method: Deposited
+        - handler: handleAdvertisementBid
+          kind: substrate/EventHandler
+          filter:
+            module: ad
+            method: Bid
+        - handler: handleSlotRemainChanged
+          kind: substrate/EventHandler
+          filter:
+            module: ad
+            method: SwapTriggered
         - handler: handleAssetTransferred
           kind: substrate/EventHandler
           filter:
