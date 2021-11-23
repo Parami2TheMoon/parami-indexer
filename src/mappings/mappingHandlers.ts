@@ -65,7 +65,7 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     advertisementReward.refererDid = referer.toString();
     advertisementReward.visitorDid = visitor.toString();
     advertisementReward.assetId = assetId.toString();
-    advertisementReward.timestampInSecond = Math.floor(Date.now() / 1000);
+    advertisementReward.timestampInSecond = Math.floor(event.block.block.header.number.toNumber() *6);
     advertisementReward.save().then(() => {
         logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(advertisementReward.visitorDid)}`);
     });
@@ -85,7 +85,7 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     tx.fromDid = await getDid(fromDid.toString());
     tx.toDid = await getDid(toDid.toString());
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
-    tx.timestampInSecond = Math.floor(Date.now() / 1000);
+    tx.timestampInSecond = Math.floor(event.block.block.header.number.toNumber() *6);
     tx.save().then(() => {
         logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(tx.fromDid)}`);
     });
@@ -105,7 +105,7 @@ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
     tx.block = event.block.block.hash.toString();
     tx.toDid = "burned";
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
-    tx.timestampInSecond = Math.floor(Date.now() / 1000);
+    tx.timestampInSecond = Math.floor(event.block.block.header.number.toNumber() *6);
     tx.save().then(() => {
         logger.info(`handleAssetBurned saved success for account: ${JSON.stringify(tx.fromDid)}`);
     });
@@ -125,7 +125,7 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
     const valueAfterReplace = value.toHuman().toString().replace(/,/g, '');;
     logger.info(`handleAd3Transaction, got amount = ${valueAfterReplace}`)
     tx.amount = BigInt(valueAfterReplace);
-    tx.timestampInSecond = Math.floor(Date.now() / 1000);
+    tx.timestampInSecond = Math.floor(event.block.block.header.number.toNumber() *6);
     tx.save().then(() => {
         logger.info(`handleAd3Transaction saved success for from account: ${JSON.stringify(tx.fromDid)}`);
     });
@@ -138,7 +138,7 @@ export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<
     const advertisement = new Advertisement(id.toString());
     advertisement.budgetInAd3 = BigInt(value.toString().replace(/,/g, ''));
     advertisement.advertiserId = did.toString();
-    advertisement.timestampInSecond = Math.floor(Date.now() / 1000);
+    advertisement.timestampInSecond = Math.floor(event.block.block.header.number.toNumber() *6);
     await advertisement.save();
 }
 
