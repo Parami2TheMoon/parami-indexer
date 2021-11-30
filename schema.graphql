@@ -43,15 +43,13 @@ type AdvertisementBid @entity {
   amount: BigInt!
   timestampInSecond: Int!
 }
-# type NftCurAdvertisement @entity {
-#   id: ID!
-#   nft: Nft!
-#   advertisement: Advertisement!
-# }
 type Advertisement @entity {
   id: ID!
   budgetInAd3: BigInt!
   advertiser: Did!
   timestampInSecond: Int!
 }
-
+type Member @entity{
+  id: ID!
+  assetId: String! @index(unique: false)
+}
