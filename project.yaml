@@ -8,7 +8,7 @@ repository: https://github.com/parami-protocol/parami-scaner
 schema:
   file: ./schema.graphql
 network:
-  genesisHash: '0x4f5dd4b1c146547c53eba8ffde224c4177eebe955f147df6e3b0d96c8bb39d00'
+  genesisHash: '0x6ca38b922767e0957c755c120088e92fb6f85941bec0c6ff9ad861887c9ca35b'
   endpoint: wss://rpc.parami.io/ws
 dataSources:
   - kind: substrate/Runtime
