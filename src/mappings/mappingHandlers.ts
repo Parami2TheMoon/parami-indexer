@@ -109,6 +109,7 @@ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
     const { event: { data: [assetId, accountId, balance] } } = event;
     const tx = new AssetTransaction(guid());
     tx.assetId = assetId.toString();
+    tx.assetSymbol = await getSymbol(tx.assetId);
     tx.fromDid = await getDid(accountId.toString());
     tx.block = event.block.block.hash.toString();
     tx.toDid = "burned";
