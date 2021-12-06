@@ -23,6 +23,7 @@ async function getDid(stashAccount: string) {
 }
 async function getSymbol(assetId: string) {
     const asset = await Asset.get(assetId);
+    if (!asset?.symbol) return '';
     return asset.symbol;
 }
 async function getOwnerDid(assetId: string) {
