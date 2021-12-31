@@ -1,6 +1,6 @@
 import { SubstrateExtrinsic, SubstrateEvent, SubstrateBlock } from "@subql/types";
 //import { Balance } from "@polkadot/types/interfaces";
-import { Asset, Did, AdvertisementReward, Advertisement, AdvertisementBudget, AdvertisementBid, Member } from "../types";
+import { Asset, Did, AdvertisementReward, Advertisement, AdvertisementBudget, AdvertisementBid, Member, AssetPrice } from "../types";
 import { Balance } from "@polkadot/types/interfaces";
 import { AssetTransaction } from "../types";
 import { Data } from "@polkadot/types";
@@ -184,3 +184,17 @@ export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<vo
 //   created: 177
 //   ad: 0x3091130280355378191cfc607dc6df4f18e536f7907fb9cd550a4f25c2673d6a
 // }
+// /// Tokens bought \[id, account, tokens, currency\]
+// SwapBuy(T::AssetId, AccountOf<T>, BalanceOf<T>, BalanceOf<T>),
+// /// Tokens sold \[id, account, tokens, currency\]
+// SwapSell(T::AssetId, AccountOf<T>, BalanceOf<T>, BalanceOf<T>),
+export async function handleSwapBuy(event: SubstrateEvent): Promise<void> {
+    const { event: { data: [id, account, tokens, currency] } } = event;
+    const price = new AssetPrice(guid());
+    price.assetId = id.toString();
+    price.price = BigInt(tokens.toString().replace(/,/g, '')) / BigInt(currency.toString().replace(/,/g, ''));
+    price.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+    price.save().then(() => {
+        logger.info(`handleSwapBuy saved success for from account: ${JSON.stringify(price.price.toString())}`);
+    });
+}

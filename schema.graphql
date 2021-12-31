@@ -9,6 +9,12 @@ type Asset @entity {
   symbol: String!
   amount: BigInt!
 }
+type AssetPrice @entity {
+  id: ID!
+  assetId: String! @index(unique: false)
+  price: BigInt!
+  timestampInSecond: Int!
+}
 type AssetTransaction @entity {
   id: ID!
   block: String! @index(unique: false)

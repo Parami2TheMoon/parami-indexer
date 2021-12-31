@@ -61,3 +61,8 @@ dataSources:
           filter:
             module: assets
             method: Burned
+        - handler: handleSwapBuy
+          kind: substrate/EventHandler
+          filter:
+            module: swap
+            method: buy_currency
