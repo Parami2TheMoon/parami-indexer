@@ -188,13 +188,24 @@ export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<vo
 // SwapBuy(T::AssetId, AccountOf<T>, BalanceOf<T>, BalanceOf<T>),
 // /// Tokens sold \[id, account, tokens, currency\]
 // SwapSell(T::AssetId, AccountOf<T>, BalanceOf<T>, BalanceOf<T>),
-export async function handleSwapBuy(event: SubstrateEvent): Promise<void> {
+// export async function handleSwapBuy(event: SubstrateEvent): Promise<void> {
+//     const { event: { data: [id, account, tokens, currency] } } = event;
+//     const price = new AssetPrice(guid());
+//     price.assetId = id.toString();
+//     price.price = BigInt(tokens.toString().replace(/,/g, '')) / BigInt(currency.toString().replace(/,/g, ''));
+//     price.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+//     price.save().then(() => {
+//         logger.info(`handleSwapBuy saved success for from account: ${JSON.stringify(price.price.toString())}`);
+//     });
+// }
+
+export async function handleSwapSold(event: SubstrateEvent): Promise<void> {
     const { event: { data: [id, account, tokens, currency] } } = event;
     const price = new AssetPrice(guid());
     price.assetId = id.toString();
     price.price = BigInt(tokens.toString().replace(/,/g, '')) / BigInt(currency.toString().replace(/,/g, ''));
     price.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
     price.save().then(() => {
-        logger.info(`handleSwapBuy saved success for from account: ${JSON.stringify(price.price.toString())}`);
+        logger.info(`handleSwapSold saved success for from account: ${JSON.stringify(price.price.toString())}`);
     });
 }
