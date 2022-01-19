@@ -199,13 +199,23 @@ export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<vo
 //     });
 // }
 
-export async function handleSwapSold(event: SubstrateEvent): Promise<void> {
+export async function handleTokenSold(event: SubstrateEvent): Promise<void> {
     const { event: { data: [id, account, tokens, currency] } } = event;
     const price = new AssetPrice(guid());
     price.assetId = id.toString();
     price.price = BigInt(tokens.toString().replace(/,/g, '')) / BigInt(currency.toString().replace(/,/g, ''));
     price.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
     price.save().then(() => {
-        logger.info(`handleSwapSold saved success for from account: ${JSON.stringify(price.price.toString())}`);
+        logger.info(`handleTokenSold saved success for from account: ${JSON.stringify(price.price.toString())}`);
     });
+}
+export async function handleTokenBought(event: SubstrateEvent): Promise<void> {
+    // const { event: { data: [id, account, tokens, currency] } } = event;
+    // const price = new AssetPrice(guid());
+    // price.assetId = id.toString();
+    // price.price = BigInt(tokens.toString().replace(/,/g, '')) / BigInt(currency.toString().replace(/,/g, ''));
+    // price.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+    // price.save().then(() => {
+    //     logger.info(`handleTokenBought saved success for from account: ${JSON.stringify(price.price.toString())}`);
+    // });
 }
