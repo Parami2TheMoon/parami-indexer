@@ -1,6 +1,8 @@
 #!/bin/bash
-rm -rf dist
-yarn build
 systemctl stop subql-indexer.service
 systemctl stop subql-query.service
+rm -rf dist
+yarn build
 sudo -u postgres psql -f ./clean.sql
+systemctl start subql-indexer.service
+systemctl start subql-query.service
