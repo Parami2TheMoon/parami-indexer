@@ -38,7 +38,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
  * @param event 
  */
 export async function handleDidAssigned(event: SubstrateEvent): Promise<void> {
-    logger.info(`mappingHandler got aDidAssigned event: ${JSON.stringify(event.toHuman())}`);
+    logger.info(`mappingHandler got a DidAssigned event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [did, stashAccount] } } = event;
     const record = new Did(did.toHuman() as string);
     record.stashAccount = stashAccount.toString();
