@@ -8,7 +8,7 @@ repository: https://github.com/parami-protocol/parami-scaner
 schema:
   file: ./schema.graphql
 network:
-  genesisHash: '0x0258688207ba59fa49a3e2cfdcb2d7143075ac7cfe189830ec228c66e1a3b2ca'
+  genesisHash: "0x3ffa019c0230e4f7c4be4a3a33d5c88200a6b117f6f85f39f1331473cf0f79a7"
   endpoint: wss://rpc.parami.io/ws
 dataSources:
   - kind: substrate/Runtime
@@ -23,7 +23,7 @@ dataSources:
             method: Assigned
         - handler: handleNftMinted
           kind: substrate/EventHandler
-          filter: 
+          filter:
             module: nft
             method: Minted
         - handler: handleAdPayout
