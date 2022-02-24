@@ -53,3 +53,5 @@ Thumbs.db
 
 # SubQuery data folders
 .data/
+
+systemd/
