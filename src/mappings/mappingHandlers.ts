@@ -5,8 +5,10 @@ import { Balance } from "@polkadot/types/interfaces";
 import { AssetTransaction } from "../types";
 import { Data } from "@polkadot/types";
 
-const ChainStartTimeStamp = 1638370302;
-
+const ChainStartTimeStamp = 1646205156;
+const timeStamp=(blockNumber: number)=>{
+    return Math.floor(ChainStartTimeStamp + blockNumber * 12);
+}
 function guid() {
     function S4() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -72,7 +74,7 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     advertisementReward.refererDid = referer.toString();
     advertisementReward.visitorDid = visitor.toString();
     advertisementReward.assetId = assetId.toString();
-    advertisementReward.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+    advertisementReward.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     advertisementReward.save().then(() => {
         logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(advertisementReward.visitorDid)}`);
     });
@@ -95,7 +97,7 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     tx.fromDid = await getDid(fromDid.toString());
     tx.toDid = await getDid(toDid.toString());
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
-    tx.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+    tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     tx.save().then(() => {
         logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(tx.fromDid)}`);
     });
@@ -115,7 +117,7 @@ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
     tx.block = event.block.block.hash.toString();
     tx.toDid = "burned";
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
-    tx.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+    tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     tx.save().then(() => {
         logger.info(`handleAssetBurned saved success for account: ${JSON.stringify(tx.fromDid)}`);
     });
@@ -135,7 +137,7 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
     const valueAfterReplace = value.toHuman().toString().replace(/,/g, '');;
     logger.info(`handleAd3Transaction, got amount = ${valueAfterReplace}`)
     tx.amount = BigInt(valueAfterReplace);
-    tx.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+    tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     tx.save().then(() => {
         logger.info(`handleAd3Transaction saved success for from account: ${JSON.stringify(tx.fromDid)}`);
     });
@@ -148,7 +150,7 @@ export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<
     const advertisement = new Advertisement(id.toString());
     advertisement.budgetInAd3 = BigInt(value.toString().replace(/,/g, ''));
     advertisement.advertiserId = did.toString();
-    advertisement.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+    advertisement.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     advertisement.save();
 }
 export async function handleAdvertisementBid(event: SubstrateEvent): Promise<void> {
@@ -157,7 +159,7 @@ export async function handleAdvertisementBid(event: SubstrateEvent): Promise<voi
     advertisementBid.kolDid = kol.toString();
     advertisementBid.advertisementId = id.toString();
     advertisementBid.amount = BigInt(value.toString().replace(/,/g, ''));
-    advertisementBid.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+    advertisementBid.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     await advertisementBid.save().then(() => {
         logger.info(`handleAdvertisementBid handled a bid event: ${JSON.stringify(event.toHuman())}`);
     });
@@ -168,7 +170,7 @@ export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<vo
     advertisementBudget.kolDid = kol.toString();
     advertisementBudget.advertisementId = id.toString();
     advertisementBudget.remain = BigInt(value.toString().replace(/,/g, ''));
-    advertisementBudget.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+    advertisementBudget.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     await advertisementBudget.save().then(() => {
         logger.info(`handleSlotRemainChanged handled a bid event: ${JSON.stringify(event.toHuman())}`);
     });
@@ -193,7 +195,7 @@ export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<vo
 //     const price = new AssetPrice(guid());
 //     price.assetId = id.toString();
 //     price.price = BigInt(tokens.toString().replace(/,/g, '')) / BigInt(currency.toString().replace(/,/g, ''));
-//     price.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+//     price.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
 //     price.save().then(() => {
 //         logger.info(`handleSwapBuy saved success for from account: ${JSON.stringify(price.price.toString())}`);
 //     });
@@ -204,7 +206,7 @@ export async function handleTokenSold(event: SubstrateEvent): Promise<void> {
     // const price = new AssetPrice(guid());
     // price.assetId = id.toString();
     // price.price = BigInt(tokens.toString().replace(/,/g, '')) / BigInt(currency.toString().replace(/,/g, ''));
-    // price.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+    // price.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     // price.save().then(() => {
     //     logger.info(`handleTokenSold saved success for from account: ${JSON.stringify(price.price.toString())}`);
     // });
@@ -214,7 +216,7 @@ export async function handleTokenBought(event: SubstrateEvent): Promise<void> {
     const price = new AssetPrice(guid());
     price.assetId = id.toString();
     price.price = BigInt(tokens.toString().replace(/,/g, '')) / BigInt(currency.toString().replace(/,/g, ''));
-    price.timestampInSecond = Math.floor(ChainStartTimeStamp + event.block.block.header.number.toNumber() * 6);
+    price.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     price.save().then(() => {
         logger.info(`handleTokenBought saved success for from account: ${JSON.stringify(price.price.toString())}`);
     });
