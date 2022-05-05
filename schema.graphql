@@ -59,3 +59,13 @@ type Member @entity{
   id: ID!
   assetId: String! @index(unique: false)
 }
+type Nft @entity{
+  id: ID!
+  status: Int! # 0: created but not minted, 1: minted
+  type: Int! # 0: native, 1: wraped
+  kolDid: String! @index(unique: false)
+  assetId: String @index(unique: false)
+  assetName: String @index(unique: false)
+  assetSymbol: String @index(unique: false)
+  assetAmount: BigInt
+}

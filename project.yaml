@@ -21,11 +21,6 @@ dataSources:
           filter:
             module: did
             method: Assigned
-        - handler: handleNftMinted
-          kind: substrate/EventHandler
-          filter:
-            module: nft
-            method: Minted
         - handler: handleAdPayout
           kind: substrate/EventHandler
           filter:
@@ -71,3 +66,14 @@ dataSources:
           filter:
             module: swap
             method: TokenSold
+        - handler: handleNftCreated
+          kind: substrate/EventHandler
+          filter:
+            module: nft
+            method: Created
+        - handler: handleNftMinted
+          kind: substrate/EventHandler
+          filter:
+            module: nft
+            method: Minted
+

@@ -1,12 +1,12 @@
 import { SubstrateExtrinsic, SubstrateEvent, SubstrateBlock } from "@subql/types";
 //import { Balance } from "@polkadot/types/interfaces";
-import { Asset, Did, AdvertisementReward, Advertisement, AdvertisementBudget, AdvertisementBid, Member, AssetPrice } from "../types";
+import { Asset, Did, AdvertisementReward, Advertisement, AdvertisementBudget, AdvertisementBid, Member, AssetPrice, Nft } from "../types";
 import { Balance } from "@polkadot/types/interfaces";
 import { AssetTransaction } from "../types";
 import { Data } from "@polkadot/types";
 
 const ChainStartTimeStamp = 1646205156;
-const timeStamp=(blockNumber: number)=>{
+const timeStamp = (blockNumber: number) => {
     return Math.floor(ChainStartTimeStamp + blockNumber * 12);
 }
 function guid() {
@@ -47,22 +47,6 @@ export async function handleDidAssigned(event: SubstrateEvent): Promise<void> {
     record.save();
 }
 
-/**
- * 
- * @param event event: {"phase":{"ApplyExtrinsic":"1"},"event":{"method":"Backed","section":"Asset","index":"0x2900","data":["0x377e68a483a3db3b23bca8d38bed464684354da0","0xa83486388d5776f8adeb739d97c75e9780209ce0","1,000,000,000,000,000,000,000"]},"topics":[]}
- * 
- * data format:         Minted(T::DecentralizedId, T::AssetId, T::AssetId, BalanceOf<T>)
- */
-export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
-    logger.info(`mappingHandler got a AssetMinted event: ${JSON.stringify(event.toHuman())}`);
-    const { event: { data: [did, assetId, name, symbol, mintedAmount] } } = event;
-    const asset = new Asset(assetId.toString());
-    asset.ownerDid = did.toString();
-    asset.name = name.toHuman().toString();
-    asset.symbol = symbol.toHuman().toString();
-    asset.amount = BigInt(mintedAmount.toString().replace(/,/g, ''));
-    asset.save();
-}
 
 export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAdPayout got a Paid event: ${JSON.stringify(event.toHuman())}`);
@@ -219,5 +203,32 @@ export async function handleTokenBought(event: SubstrateEvent): Promise<void> {
     price.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     price.save().then(() => {
         logger.info(`handleTokenBought saved success for from account: ${JSON.stringify(price.price.toString())}`);
+    });
+}
+
+export async function handleNftCreated(event: SubstrateEvent): Promise<void> {
+    const { event: { data: [did, nftId] } } = event;
+    const nft = new Nft(nftId.toString());
+    if (event.extrinsic.extrinsic.method.method.indexOf('port') > -1) {
+        nft.type = 1;
+    } else {
+        nft.type = 0;
+    }
+    nft.status = 0;
+    nft.kolDid = did.toString();
+    nft.save().then(() => {
+        logger.info(`handleNftCreated saved success for NftID: ` + nft.id);
+    });
+}
+export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
+    const { event: { data: [_did, nftId, assetId, assetName, assetSymbol, assetAmount] } } = event;
+    Nft.get(nftId.toString()).then(nft => {
+        nft.assetId = assetId.toString();
+        nft.assetName = assetName.toString();
+        nft.assetSymbol = assetSymbol.toString();
+        nft.assetAmount = BigInt(assetAmount.toString().replace(/,/g, ''));
+        nft.save().then(() => {
+            logger.info(`handleNftMinted saved success for NftID: ` + nft.id);
+        });
     });
 }
