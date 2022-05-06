@@ -210,25 +210,55 @@ export async function handleNftCreated(event: SubstrateEvent): Promise<void> {
     const { event: { data: [did, nftId] } } = event;
     const nft = new Nft(nftId.toString());
     if (event.extrinsic.extrinsic.method.method.indexOf('port') > -1) {
-        nft.type = 1;
+        nft.type = 1;// imported
     } else {
-        nft.type = 0;
+        nft.type = 0;// native
     }
-    nft.status = 0;
+    nft.status = 0;// created
     nft.kolDid = did.toString();
     nft.save().then(() => {
         logger.info(`handleNftCreated saved success for NftID: ` + nft.id);
     });
 }
 export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
-    const { event: { data: [_did, nftId, assetId, assetName, assetSymbol, assetAmount] } } = event;
-    Nft.get(nftId.toString()).then(nft => {
-        nft.assetId = assetId.toString();
-        nft.assetName = assetName.toString();
-        nft.assetSymbol = assetSymbol.toString();
-        nft.assetAmount = BigInt(assetAmount.toString().replace(/,/g, ''));
+    // code updated at block 165660
+    // old
+    if (event.block.block.header.number.toNumber() < 165660) {
+        logger.info(`mappingHandler got a AssetMinted event: ${JSON.stringify(event.toHuman())}`);
+        const { event: { data: [did, assetId, name, symbol, mintedAmount] } } = event;
+        const asset = new Asset(assetId.toString());
+        asset.ownerDid = did.toString();
+        asset.name = name.toHuman().toString();
+        asset.symbol = symbol.toHuman().toString();
+        asset.amount = BigInt(mintedAmount.toString().replace(/,/g, ''));
+        asset.save();
+        const nft = new Nft(assetId.toString());
+        nft.type = 0;
+        nft.status = 1;
+        nft.kolDid = did.toString();
+        nft.assetName = name.toHuman().toString();
+        nft.assetSymbol = symbol.toHuman().toString();
+        nft.assetAmount = BigInt(mintedAmount.toString().replace(/,/g, ''));
         nft.save().then(() => {
-            logger.info(`handleNftMinted saved success for NftID: ` + nft.id);
+            logger.info(`handleNftCreated saved success for NftID: ` + nft.id);
         });
-    });
+    }// new
+    else {
+        const { event: { data: [_did, nftId, assetId, assetName, assetSymbol, assetAmount] } } = event;
+        Nft.get(nftId.toString()).then(nft => {
+            if (nft) {
+                nft.status = 1;// minted
+                nft.assetId = assetId.toString();
+                nft.assetName = assetName.toHuman().toString();
+                nft.assetSymbol = assetSymbol.toHuman().toString();
+                nft.assetAmount = BigInt(assetAmount.toString().replace(/,/g, ''));
+                nft.save().then(() => {
+                    logger.info(`handleNftMinted saved success for NftID: ` + nft.id);
+                });
+            } else {
+                logger.info(`handleNftMinted got an error for NftID: ` + nftId.toString() + ' not found');
+            }
+        });
+    }
+
 }
