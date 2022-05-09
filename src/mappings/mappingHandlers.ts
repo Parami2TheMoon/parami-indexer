@@ -225,9 +225,10 @@ export async function handleNftCreated(event: SubstrateEvent): Promise<void> {
     });
 }
 export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
-    // code updated at block 165660
+    // code is not updated now (block: 492093), use it(9999999999) temporarily
+    // we should use chain version instead of block number
     // old
-    if (event.block.block.header.number.toNumber() < 165660) {
+    if (event.block.block.header.number.toNumber() < 9999999999) {
         logger.info(`mappingHandler got a AssetMinted event: ${JSON.stringify(event.toHuman())}`);
         const { event: { data: [did, assetId, _, name, symbol, mintedAmount] } } = event;
         const asset = new Asset(assetId.toString());
