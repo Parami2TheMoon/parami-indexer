@@ -57,6 +57,7 @@ type Advertisement @entity {
 }
 type Member @entity{
   id: ID!
+  did: String @index(unique: false)
   assetId: String! @index(unique: false)
 }
 type Nft @entity{

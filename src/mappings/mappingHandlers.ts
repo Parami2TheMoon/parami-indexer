@@ -72,6 +72,8 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     logger.info(`handleAssetTransferred got event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [assetId, fromDid, toDid, balance] } } = event;
     const member = new Member(toDid.toString() + '.' + assetId.toString());
+    const did=await getDid(toDid.toString());
+    member.did = did;
     member.assetId = assetId.toString();
     member.save();
     const tx = new AssetTransaction(guid());
@@ -79,7 +81,7 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     tx.assetSymbol = await getSymbol(tx.assetId);
     tx.block = event.block.block.hash.toString();
     tx.fromDid = await getDid(fromDid.toString());
-    tx.toDid = await getDid(toDid.toString());
+    tx.toDid = did;
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
     tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     tx.save().then(() => {
