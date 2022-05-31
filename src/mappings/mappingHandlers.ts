@@ -126,7 +126,7 @@ export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<
     const { event: { data: [id, did, value] } } = event;
     const advertisement = new Advertisement(id.toString());
     advertisement.budgetInAd3 = BigInt(value.toString().replace(/,/g, ''));
-    advertisement.advertiserId = did.toString();
+    advertisement.advertiser = did.toString();
     advertisement.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     await advertisement.save();
 }
