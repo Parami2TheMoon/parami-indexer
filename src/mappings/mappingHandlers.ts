@@ -59,9 +59,7 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     advertisementReward.visitorDid = visitor.toString();
     advertisementReward.assetId = assetId.toString();
     advertisementReward.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    advertisementReward.save().then(() => {
-        logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(advertisementReward.visitorDid)}`);
-    });
+    advertisementReward.save();
 }
 
 /**
@@ -84,9 +82,7 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     tx.toDid = did;
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
     tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    tx.save().then(() => {
-        logger.info(`handleAssetTransferred saved success for from account: ${JSON.stringify(tx.fromDid)}`);
-    });
+    tx.save();
 }
 
 /**
@@ -104,9 +100,7 @@ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
     tx.toDid = "burned";
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
     tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    tx.save().then(() => {
-        logger.info(`handleAssetBurned saved success for account: ${JSON.stringify(tx.fromDid)}`);
-    });
+    tx.save();
 }
 
 //balance.Transfer
@@ -121,12 +115,9 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
     tx.toDid = await getDid(toDid.toString());
 
     const valueAfterReplace = value.toHuman().toString().replace(/,/g, '');;
-    logger.info(`handleAd3Transaction, got amount = ${valueAfterReplace}`)
     tx.amount = BigInt(valueAfterReplace);
     tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    tx.save().then(() => {
-        logger.info(`handleAd3Transaction saved success for from account: ${JSON.stringify(tx.fromDid)}`);
-    });
+    tx.save();
 }
 
 //ad.Deposited
