@@ -131,7 +131,7 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
 
 //ad.Deposited
 export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<void> {
-    logger.info(`handleAdvertisement got a Paid event: ${JSON.stringify(event.toHuman())}`);
+    logger.info(`handleAdvertisementCreate got an event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [id, did, value] } } = event;
     const advertisement = new Advertisement(id.toString());
     advertisement.budgetInAd3 = BigInt(value.toString().replace(/,/g, ''));
@@ -140,26 +140,24 @@ export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<
     advertisement.save();
 }
 export async function handleAdvertisementBid(event: SubstrateEvent): Promise<void> {
+    logger.info(`handleAdvertisementBid handled an event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [kol, id, value] } } = event;
     const advertisementBid = new AdvertisementBid(guid());
     advertisementBid.kolDid = kol.toString();
     advertisementBid.advertisementId = id.toString();
     advertisementBid.amount = BigInt(value.toString().replace(/,/g, ''));
     advertisementBid.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    await advertisementBid.save().then(() => {
-        logger.info(`handleAdvertisementBid handled a bid event: ${JSON.stringify(event.toHuman())}`);
-    });
+    advertisementBid.save();
 }
 export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<void> {
+    logger.info(`handleSlotRemainChanged handled an event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [id, kol, value] } } = event;
     const advertisementBudget = new AdvertisementBudget(guid());
     advertisementBudget.kolDid = kol.toString();
     advertisementBudget.advertisementId = id.toString();
     advertisementBudget.remain = BigInt(value.toString().replace(/,/g, ''));
     advertisementBudget.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    await advertisementBudget.save().then(() => {
-        logger.info(`handleSlotRemainChanged handled a bid event: ${JSON.stringify(event.toHuman())}`);
-    });
+    advertisementBudget.save();
 }
 //ad.Bid
 // ad.slotOf: Option<ParamiAdSlot>
@@ -198,17 +196,17 @@ export async function handleTokenSold(event: SubstrateEvent): Promise<void> {
     // });
 }
 export async function handleTokenBought(event: SubstrateEvent): Promise<void> {
+    logger.info(`handleTokenBought handled an event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [id, account, tokens, currency] } } = event;
     const price = new AssetPrice(guid());
     price.assetId = id.toString();
     price.price = BigInt(tokens.toString().replace(/,/g, '')) / BigInt(currency.toString().replace(/,/g, ''));
     price.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    price.save().then(() => {
-        logger.info(`handleTokenBought saved success for from account: ${JSON.stringify(price.price.toString())}`);
-    });
+    price.save();
 }
 
 export async function handleNftCreated(event: SubstrateEvent): Promise<void> {
+    logger.info(`handleNftCreated handled an event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [did, nftId] } } = event;
     Nft.get(nftId.toString()).then(nft => {
         if (!nft) {
@@ -221,17 +219,15 @@ export async function handleNftCreated(event: SubstrateEvent): Promise<void> {
         }
         nft.status = 0;// created
         nft.kolDid = did.toString();
-        nft.save().then(() => {
-            logger.info(`handleNftCreated saved success for NftID: ` + nft.id);
-        });
+        nft.save();
     });
 }
 export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
+    logger.info(`handleNftMinted handled an event: ${JSON.stringify(event.toHuman())}`);
     // code is not updated now (block: 492093), use it(9999999999) temporarily
     // we should use chain version instead of block number
     // old
     if (event.block.block.header.number.toNumber() < 504793) {
-        logger.info(`mappingHandler got a AssetMinted event: ${JSON.stringify(event.toHuman())}`);
         const { event: { data: [did, assetId, _, name, symbol, mintedAmount] } } = event;
         const asset = new Asset(assetId.toString());
         asset.ownerDid = did.toString();
@@ -247,9 +243,7 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
         nft.assetName = name.toHuman().toString();
         nft.assetSymbol = symbol.toHuman().toString();
         nft.assetAmount = BigInt(mintedAmount.toString().replace(/,/g, ''));
-        nft.save().then(() => {
-            logger.info(`handleNftMinted saved success for an obsolete NftID: ` + nft.id);
-        });
+        nft.save();
     }
     else
     // new 
@@ -263,9 +257,7 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
                 nft.assetName = assetName.toHuman().toString();
                 nft.assetSymbol = assetSymbol.toHuman().toString();
                 nft.assetAmount = BigInt(assetAmount.toString().replace(/,/g, ''));
-                nft.save().then(() => {
-                    logger.info(`handleNftMinted saved success for NftID: ` + nft.id);
-                });
+                nft.save();
             } else {
                 const nft = new Nft(nftId.toString());
                 nft.type = 0;// native
