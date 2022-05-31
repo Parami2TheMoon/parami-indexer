@@ -199,7 +199,7 @@ export async function handleTokenBought(event: SubstrateEvent): Promise<void> {
 export async function handleNftCreated(event: SubstrateEvent): Promise<void> {
     logger.info(`handleNftCreated handled an event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [did, nftId] } } = event;
-    Nft.get(nftId.toString()).then(nft => {
+    Nft.get(nftId.toString()).then(async nft => {
         if (!nft) {
             nft = new Nft(nftId.toString());
         }
