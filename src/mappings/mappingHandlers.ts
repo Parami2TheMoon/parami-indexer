@@ -44,7 +44,7 @@ export async function handleDidAssigned(event: SubstrateEvent): Promise<void> {
     const { event: { data: [did, stashAccount] } } = event;
     const record = new Did(did.toHuman() as string);
     record.stashAccount = stashAccount.toString();
-    record.save();
+    await record.save();
 }
 
 
@@ -59,7 +59,7 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     advertisementReward.visitorDid = visitor.toString();
     advertisementReward.assetId = assetId.toString();
     advertisementReward.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    advertisementReward.save();
+    await advertisementReward.save();
 }
 
 /**
@@ -70,10 +70,10 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     logger.info(`handleAssetTransferred got event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [assetId, fromDid, toDid, balance] } } = event;
     const member = new Member(toDid.toString() + '.' + assetId.toString());
-    const did=await getDid(toDid.toString());
+    const did = await getDid(toDid.toString());
     member.did = did;
     member.assetId = assetId.toString();
-    member.save();
+    await member.save();
     const tx = new AssetTransaction(guid());
     tx.assetId = assetId.toString();
     tx.assetSymbol = await getSymbol(tx.assetId);
@@ -82,7 +82,7 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     tx.toDid = did;
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
     tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    tx.save();
+    await tx.save();
 }
 
 /**
@@ -100,7 +100,7 @@ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
     tx.toDid = "burned";
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
     tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    tx.save();
+    await tx.save();
 }
 
 //balance.Transfer
@@ -117,7 +117,7 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
     const valueAfterReplace = value.toHuman().toString().replace(/,/g, '');;
     tx.amount = BigInt(valueAfterReplace);
     tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    tx.save();
+    await tx.save();
 }
 
 //ad.Deposited
@@ -128,7 +128,7 @@ export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<
     advertisement.budgetInAd3 = BigInt(value.toString().replace(/,/g, ''));
     advertisement.advertiserId = did.toString();
     advertisement.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    advertisement.save();
+    await advertisement.save();
 }
 export async function handleAdvertisementBid(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAdvertisementBid handled an event: ${JSON.stringify(event.toHuman())}`);
@@ -138,7 +138,7 @@ export async function handleAdvertisementBid(event: SubstrateEvent): Promise<voi
     advertisementBid.advertisementId = id.toString();
     advertisementBid.amount = BigInt(value.toString().replace(/,/g, ''));
     advertisementBid.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    advertisementBid.save();
+    await advertisementBid.save();
 }
 export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<void> {
     logger.info(`handleSlotRemainChanged handled an event: ${JSON.stringify(event.toHuman())}`);
@@ -148,7 +148,7 @@ export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<vo
     advertisementBudget.advertisementId = id.toString();
     advertisementBudget.remain = BigInt(value.toString().replace(/,/g, ''));
     advertisementBudget.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    advertisementBudget.save();
+    await advertisementBudget.save();
 }
 //ad.Bid
 // ad.slotOf: Option<ParamiAdSlot>
@@ -193,7 +193,7 @@ export async function handleTokenBought(event: SubstrateEvent): Promise<void> {
     price.assetId = id.toString();
     price.price = BigInt(tokens.toString().replace(/,/g, '')) / BigInt(currency.toString().replace(/,/g, ''));
     price.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
-    price.save();
+    await price.save();
 }
 
 export async function handleNftCreated(event: SubstrateEvent): Promise<void> {
@@ -210,7 +210,7 @@ export async function handleNftCreated(event: SubstrateEvent): Promise<void> {
         }
         nft.status = 0;// created
         nft.kolDid = did.toString();
-        nft.save();
+        await nft.save();
     });
 }
 export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
@@ -225,7 +225,7 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
         asset.name = name.toHuman().toString();
         asset.symbol = symbol.toHuman().toString();
         asset.amount = BigInt(mintedAmount.toString().replace(/,/g, ''));
-        asset.save();
+        await asset.save();
         const nft = new Nft(guid());
         nft.type = 2;// old asset minted
         nft.status = 1;
@@ -234,13 +234,13 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
         nft.assetName = name.toHuman().toString();
         nft.assetSymbol = symbol.toHuman().toString();
         nft.assetAmount = BigInt(mintedAmount.toString().replace(/,/g, ''));
-        nft.save();
+        await nft.save();
     }
     else
     // new 
     {
         const { event: { data: [did, nftId, assetId, assetName, assetSymbol, assetAmount] } } = event;
-        Nft.get(nftId.toString()).then(nft => {
+        Nft.get(nftId.toString()).then(async nft => {
             if (nft) {
                 nft.kolDid = did.toString();
                 nft.status = 1;// minted
@@ -248,7 +248,7 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
                 nft.assetName = assetName.toHuman().toString();
                 nft.assetSymbol = assetSymbol.toHuman().toString();
                 nft.assetAmount = BigInt(assetAmount.toString().replace(/,/g, ''));
-                nft.save();
+                await nft.save();
             } else {
                 const nft = new Nft(nftId.toString());
                 nft.type = 0;// native
@@ -257,6 +257,7 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
                 nft.assetName = assetName.toHuman().toString();
                 nft.assetSymbol = assetSymbol.toHuman().toString();
                 nft.assetAmount = BigInt(assetAmount.toString().replace(/,/g, ''));
+                await nft.save();
             }
         });
     }

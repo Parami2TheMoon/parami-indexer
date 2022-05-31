@@ -52,7 +52,7 @@ type AdvertisementBid @entity {
 type Advertisement @entity {
   id: ID!
   budgetInAd3: BigInt!
-  advertiser: Did!
+  advertiser: String!
   timestampInSecond: Int!
 }
 type Member @entity{
