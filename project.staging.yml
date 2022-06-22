@@ -21,6 +21,11 @@ dataSources:
           filter:
             module: did
             method: Assigned
+        - handler: handleDidTransferred
+          kind: substrate/EventHandler
+          filter: 
+            module: did
+            method: Transferred
         - handler: handleAdPayout
           kind: substrate/EventHandler
           filter:
