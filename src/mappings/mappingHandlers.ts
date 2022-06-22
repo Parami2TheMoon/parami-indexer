@@ -1,9 +1,6 @@
-import { SubstrateExtrinsic, SubstrateEvent, SubstrateBlock } from "@subql/types";
-//import { Balance } from "@polkadot/types/interfaces";
+import { SubstrateEvent, SubstrateBlock } from "@subql/types";
 import { Asset, Did, AdvertisementReward, Advertisement, AdvertisementBudget, AdvertisementBid, Member, AssetPrice, Nft } from "../types";
-import { Balance } from "@polkadot/types/interfaces";
 import { AssetTransaction } from "../types";
-import { Data } from "@polkadot/types";
 
 const ChainStartTimeStamp = 1646205156;
 const timeStamp = (blockNumber: number) => {
@@ -27,10 +24,6 @@ async function getSymbol(assetId: string) {
     const asset = await Asset.get(assetId);
     if (!asset?.symbol) return '';
     return asset.symbol;
-}
-async function getOwnerDid(assetId: string) {
-    const asset = await Asset.get(assetId);
-    return asset.ownerDid;
 }
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
     logger.debug("mappingHandler got a block: ", block.block.header.number.toNumber());

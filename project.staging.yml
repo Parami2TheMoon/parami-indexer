@@ -1,0 +1,79 @@
+specVersion: 0.2.0
+name: parami-scaner
+version: 1.0.0
+description: >-
+  parami: parallel metaverse identity; and AD platform on web3, for KOL and
+  creator.
+repository: https://github.com/parami-protocol/parami-scaner
+schema:
+  file: ./schema.graphql
+network:
+  genesisHash: "0x2bb189acbfbf321a599f0a1bffe142462229028fe95f050f8164ec77b1e75519"
+  endpoint: ws://localhost:9944
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleDidAssigned
+          kind: substrate/EventHandler
+          filter:
+            module: did
+            method: Assigned
+        - handler: handleAdPayout
+          kind: substrate/EventHandler
+          filter:
+            module: ad
+            method: Paid
+        - handler: handleAd3Transaction
+          kind: substrate/EventHandler
+          filter:
+            module: balances
+            method: Transfer
+        - handler: handleAdvertisementCreate
+          kind: substrate/EventHandler
+          filter:
+            module: ad
+            method: Deposited
+        - handler: handleAdvertisementBid
+          kind: substrate/EventHandler
+          filter:
+            module: ad
+            method: Bid
+        - handler: handleSlotRemainChanged
+          kind: substrate/EventHandler
+          filter:
+            module: ad
+            method: SwapTriggered
+        - handler: handleAssetTransferred
+          kind: substrate/EventHandler
+          filter:
+            module: assets
+            method: Transferred
+        - handler: handleAssetBurned
+          kind: substrate/EventHandler
+          filter:
+            module: assets
+            method: Burned
+        - handler: handleTokenBought
+          kind: substrate/EventHandler
+          filter:
+            module: swap
+            method: TokenBought
+        - handler: handleTokenSold
+          kind: substrate/EventHandler
+          filter:
+            module: swap
+            method: TokenSold
+        - handler: handleNftCreated
+          kind: substrate/EventHandler
+          filter:
+            module: nft
+            method: Created
+        - handler: handleNftMinted
+          kind: substrate/EventHandler
+          filter:
+            module: nft
+            method: Minted
+
