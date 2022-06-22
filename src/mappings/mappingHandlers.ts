@@ -42,7 +42,7 @@ export async function handleDidTransferred(event: SubstrateEvent): Promise<void>
     const { event: { data: [did, _oldStashAccount, newStashAccount] } } = event;
     const record = new Did(guid());
     record.did = did.toHuman() as string;
-    record.stashAccount = newStashAccount.toString();
+    record.stashAccountId = newStashAccount.toString();
     record.blockHash = event.block.hash.toString();
     record.extrinsicHash = event.extrinsic?.extrinsic.hash.toString();
 }
