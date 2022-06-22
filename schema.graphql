@@ -1,6 +1,9 @@
 type Did @entity {
   id: ID!
-  stashAccount: String! @index(unique: false)
+  did: String! @index(unique: false)
+  stashAccountId: String! @index(unique: false)
+  blockHash: String!
+  extrinsicHash: String!
 }
 type Asset @entity {
   id: ID!
@@ -20,8 +23,8 @@ type AssetTransaction @entity {
   block: String! @index(unique: false)
   assetId: String! @index(unique: false)
   assetSymbol: String!
-  fromDid: String! @index(unique: false)
-  toDid: String! @index(unique: false)
+  fromAccountId: String! @index(unique: false)
+  toAccountId: String! @index(unique: false)
   amount: BigInt!
   timestampInSecond: Int!
 }
@@ -57,7 +60,7 @@ type Advertisement @entity {
 }
 type Member @entity{
   id: ID!
-  did: String @index(unique: false)
+  accountId: String @index(unique: false)
   assetId: String! @index(unique: false)
 }
 type Nft @entity{

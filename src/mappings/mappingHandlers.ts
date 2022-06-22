@@ -6,6 +6,7 @@ const ChainStartTimeStamp = 1646205156;
 const timeStamp = (blockNumber: number) => {
     return Math.floor(ChainStartTimeStamp + blockNumber * 12);
 }
+
 function guid() {
     function S4() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -13,13 +14,6 @@ function guid() {
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
 
-async function getDid(stashAccount: string) {
-    const did = await Did.getByStashAccount(stashAccount);
-    if (did.length === 0) {
-        return stashAccount;
-    }
-    return did[0].id;
-}
 async function getSymbol(assetId: string) {
     const asset = await Asset.get(assetId);
     if (!asset?.symbol) return '';
@@ -35,11 +29,23 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 export async function handleDidAssigned(event: SubstrateEvent): Promise<void> {
     logger.info(`mappingHandler got a DidAssigned event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [did, stashAccount] } } = event;
-    const record = new Did(did.toHuman() as string);
-    record.stashAccount = stashAccount.toString();
+    const record = new Did(guid());
+    record.did = did.toHuman() as string;
+    record.stashAccountId = stashAccount.toString();
+    record.blockHash = event.block.hash.toString();
+    record.extrinsicHash = event.extrinsic?.extrinsic.hash.toString(); 
     await record.save();
 }
 
+export async function handleDidTransferred(event: SubstrateEvent): Promise<void> {
+    logger.info(`mappingHandler got a Did::Transferred event: ${JSON.stringify(event.toHuman())}`);
+    const { event: { data: [did, _oldStashAccount, newStashAccount] } } = event;
+    const record = new Did(guid());
+    record.did = did.toHuman() as string;
+    record.stashAccountId = newStashAccount.toString();
+    record.blockHash = event.block.hash.toString();
+    record.extrinsicHash = event.extrinsic?.extrinsic.hash.toString();
+}
 
 export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAdPayout got a Paid event: ${JSON.stringify(event.toHuman())}`);
@@ -61,18 +67,17 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
  */
 export async function handleAssetTransferred(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAssetTransferred got event: ${JSON.stringify(event.toHuman())}`);
-    const { event: { data: [assetId, fromDid, toDid, balance] } } = event;
-    const member = new Member(toDid.toString() + '.' + assetId.toString());
-    const did = await getDid(toDid.toString());
-    member.did = did;
+    const { event: { data: [assetId, fromAccountId, toAccountId, balance] } } = event;
+    const member = new Member(toAccountId.toString() + '.' + assetId.toString());
+    member.accountId = toAccountId.toString();
     member.assetId = assetId.toString();
     await member.save();
     const tx = new AssetTransaction(guid());
     tx.assetId = assetId.toString();
     tx.assetSymbol = await getSymbol(tx.assetId);
     tx.block = event.block.block.hash.toString();
-    tx.fromDid = await getDid(fromDid.toString());
-    tx.toDid = did;
+    tx.fromAccountId = fromAccountId.toString();
+    tx.toAccountId = toAccountId.toString();
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
     tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     await tx.save();
@@ -88,9 +93,9 @@ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
     const tx = new AssetTransaction(guid());
     tx.assetId = assetId.toString();
     tx.assetSymbol = await getSymbol(tx.assetId);
-    tx.fromDid = await getDid(accountId.toString());
+    tx.fromAccountId = accountId.toString();
     tx.block = event.block.block.hash.toString();
-    tx.toDid = "burned";
+    tx.toAccountId = "burned";
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
     tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     await tx.save();
@@ -99,13 +104,13 @@ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
 //balance.Transfer
 export async function handleAd3Transaction(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAd3Transaction got a Paid event: ${JSON.stringify(event.toHuman())}`);
-    const { event: { data: [fromDid, toDid, value] } } = event;
+    const { event: { data: [fromAccountId, toAccountId, value] } } = event;
     const tx = new AssetTransaction(guid());
     tx.assetId = 'AD3';
     tx.assetSymbol = 'AD3';
     tx.block = event.block.block.hash.toString();
-    tx.fromDid = await getDid(fromDid.toString());
-    tx.toDid = await getDid(toDid.toString());
+    tx.fromAccountId = fromAccountId.toString();
+    tx.toAccountId = toAccountId.toString();
 
     const valueAfterReplace = value.toHuman().toString().replace(/,/g, '');;
     tx.amount = BigInt(valueAfterReplace);
