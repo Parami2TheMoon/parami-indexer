@@ -74,7 +74,6 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     await member.save();
     const tx = new AssetTransaction(guid());
     tx.assetId = assetId.toString();
-    tx.assetSymbol = await getSymbol(tx.assetId);
     tx.block = event.block.block.hash.toString();
     tx.fromAccountId = fromAccountId.toString();
     tx.toAccountId = toAccountId.toString();
@@ -92,7 +91,6 @@ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
     const { event: { data: [assetId, accountId, balance] } } = event;
     const tx = new AssetTransaction(guid());
     tx.assetId = assetId.toString();
-    tx.assetSymbol = await getSymbol(tx.assetId);
     tx.fromAccountId = accountId.toString();
     tx.block = event.block.block.hash.toString();
     tx.toAccountId = "burned";
@@ -107,7 +105,6 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
     const { event: { data: [fromAccountId, toAccountId, value] } } = event;
     const tx = new AssetTransaction(guid());
     tx.assetId = 'AD3';
-    tx.assetSymbol = 'AD3';
     tx.block = event.block.block.hash.toString();
     tx.fromAccountId = fromAccountId.toString();
     tx.toAccountId = toAccountId.toString();

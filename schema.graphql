@@ -22,7 +22,6 @@ type AssetTransaction @entity {
   id: ID!
   block: String! @index(unique: false)
   assetId: String! @index(unique: false)
-  assetSymbol: String!
   fromAccountId: String! @index(unique: false)
   toAccountId: String! @index(unique: false)
   amount: BigInt!
