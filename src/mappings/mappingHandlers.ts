@@ -127,10 +127,10 @@ export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<
 }
 export async function handleAdvertisementBid(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAdvertisementBid handled an event: ${JSON.stringify(event.toHuman())}`);
-    const { event: { data: [kol, id, value] } } = event;
+    const { event: { data: [nftId, adId, value] } } = event;
     const advertisementBid = new AdvertisementBid(guid());
-    advertisementBid.kolDid = kol.toString();
-    advertisementBid.advertisementId = id.toString();
+    advertisementBid.nftId = nftId.toString();
+    advertisementBid.advertisementId = adId.toString();
     advertisementBid.amount = BigInt(value.toString().replace(/,/g, ''));
     advertisementBid.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     await advertisementBid.save();
