@@ -252,24 +252,24 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
             }
         });
     }
+}
 
-    async function handleCodeUpdated(event: SubstrateEvent) : Promise<void> {
-        logger.info(`handleCodeUpdated handled an event: ${JSON.stringify(event.toHuman())}`);
-        if (event.block.specVersion === 324) {
-            //In upgrade of 323 -> 324, ad.bided's schema transfer from Bid(DidOf<T>, HashOf<T>, BalanceOf<T>) -> Bid(NftOf<T>, HashOf<T>, BalanceOf<T>), 
-            //so we need migrate the existing value in db
-            //There only exists two kol before this upgrade, so deal with them manually
-            //0x33f89db830e20483cd44cf5d906bb4d2da1ab896's prefferredNft is 0
-            //0x0c3d48626e46524699f86112035152aa6336bee9's prefferredNft is 7
-            let preferredOfDID = new Map([["0x33f89db830e20483cd44cf5d906bb4d2da1ab896", "0"], ["0x0c3d48626e46524699f86112035152aa6336bee9", "7"]]);
-            
-            let bids = await AdvertisementBid.getByNftId("0x33f89db830e20483cd44cf5d906bb4d2da1ab896");
-            bids.concat(await AdvertisementBid.getByNftId("0x0c3d48626e46524699f86112035152aa6336bee9"));
+export async function handleCodeUpdated(event: SubstrateEvent) : Promise<void> {
+    logger.info(`handleCodeUpdated handled an event: ${JSON.stringify(event.toHuman())}`);
+    if (event.block.specVersion === 324) {
+        //In upgrade of 323 -> 324, ad.bided's schema transfer from Bid(DidOf<T>, HashOf<T>, BalanceOf<T>) -> Bid(NftOf<T>, HashOf<T>, BalanceOf<T>), 
+        //so we need migrate the existing value in db
+        //There only exists two kol before this upgrade, so deal with them manually
+        //0x33f89db830e20483cd44cf5d906bb4d2da1ab896's prefferredNft is 0
+        //0x0c3d48626e46524699f86112035152aa6336bee9's prefferredNft is 7
+        let preferredOfDID = new Map([["0x33f89db830e20483cd44cf5d906bb4d2da1ab896", "0"], ["0x0c3d48626e46524699f86112035152aa6336bee9", "7"]]);
+        
+        let bids = await AdvertisementBid.getByNftId("0x33f89db830e20483cd44cf5d906bb4d2da1ab896");
+        bids.concat(await AdvertisementBid.getByNftId("0x0c3d48626e46524699f86112035152aa6336bee9"));
 
-            for (let bid of bids) {
-                bid.nftId = preferredOfDID[bid.nftId];
-                await bid.save();
-            }
+        for (let bid of bids) {
+            bid.nftId = preferredOfDID[bid.nftId];
+            await bid.save();
         }
     }
 }
