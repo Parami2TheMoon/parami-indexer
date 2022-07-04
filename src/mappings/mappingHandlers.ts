@@ -272,9 +272,9 @@ export async function handleCodeUpdated(event: SubstrateEvent): Promise<void> {
                 logger.info(`preferredOfDID doesnot contains ${stringifyWithBigIntSupport(bid)}`);
                 continue;
             }
-            logger.info(`got bid as ${stringifyWithBigIntSupport(bid)}, bid.nftId is ${bid.nftId}, preferredOfDID is ${preferredOfDID[bid.nftId]} `);
+            logger.info(`got bid as ${stringifyWithBigIntSupport(bid)}, bid.nftId is ${bid.nftId}, preferredOfDID is ${preferredOfDID.get(bid.nftId)} `);
             let oldNftId = bid.nftId;
-            bid.nftId = preferredOfDID[bid.nftId];
+            bid.nftId = preferredOfDID.get(bid.nftId);
             await bid.save();
             logger.info(`update bid's nftId from ${oldNftId} to ${bid.nftId}`)
         }
