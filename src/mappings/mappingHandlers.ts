@@ -269,14 +269,24 @@ export async function handleCodeUpdated(event: SubstrateEvent): Promise<void> {
 
         for (let bid of bids) {
             if (!preferredOfDID.has(bid.nftId)) {
-                logger.info(`preferredOfDID doesnot contains ${JSON.stringify(bid)}`);
+                logger.info(`preferredOfDID doesnot contains ${stringifyWithBigIntSupport(bid)}`);
                 continue;
             }
-            logger.info(`got bit as ${JSON.stringify(bid)}, bid.nftId is ${bid.nftId}, preferredOfDID is ${bid.nftId}`);
+            logger.info(`got bit as ${stringifyWithBigIntSupport(bid)}, bid.nftId is ${bid.nftId}, preferredOfDID is ${bid.nftId} `);
             let oldNftId = bid.nftId;
             bid.nftId = preferredOfDID[bid.nftId];
             await bid.save();
             logger.info(`update bid's nftId from ${oldNftId} to ${bid.nftId}`)
         }
+    }
+
+    function stringifyWithBigIntSupport(obj: Object) {
+        JSON.stringify(
+            obj,
+            (key, value) =>
+                typeof value === 'bigint'
+                    ? value.toString()
+                    : value // return everything else unchanged
+        )
     }
 }
