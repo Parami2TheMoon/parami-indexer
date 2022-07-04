@@ -265,7 +265,7 @@ export async function handleCodeUpdated(event: SubstrateEvent): Promise<void> {
         let preferredOfDID = new Map([["0x33f89db830e20483cd44cf5d906bb4d2da1ab896", "0"], ["0x0c3d48626e46524699f86112035152aa6336bee9", "7"]]);
 
         let bids = await AdvertisementBid.getByNftId("0x33f89db830e20483cd44cf5d906bb4d2da1ab896");
-        bids.concat(await AdvertisementBid.getByNftId("0x0c3d48626e46524699f86112035152aa6336bee9"));
+        bids = bids.concat(await AdvertisementBid.getByNftId("0x0c3d48626e46524699f86112035152aa6336bee9"));
 
         for (let bid of bids) {
             if (!preferredOfDID.has(bid.nftId)) {
