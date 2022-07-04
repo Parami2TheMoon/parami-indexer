@@ -268,6 +268,10 @@ export async function handleCodeUpdated(event: SubstrateEvent): Promise<void> {
         bids.concat(await AdvertisementBid.getByNftId("0x0c3d48626e46524699f86112035152aa6336bee9"));
 
         for (let bid of bids) {
+            if (!preferredOfDID.has(bid.nftId)) {
+                logger.info(`preferredOfDID doesnot contains ${JSON.stringify(bid)}`);
+                continue;
+            }
             logger.info(`got bit as ${JSON.stringify(bid)}, bid.nftId is ${bid.nftId}, preferredOfDID is ${bid.nftId}`);
             let oldNftId = bid.nftId;
             bid.nftId = preferredOfDID[bid.nftId];
