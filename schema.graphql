@@ -16,7 +16,7 @@ type AssetPrice @entity {
   id: ID!
   assetId: String! @index(unique: false)
   price: BigInt!
-  timestampInSecond: Int!
+  timestampInBlockNumber: Int!
 }
 type AssetTransaction @entity {
   id: ID!
@@ -25,7 +25,7 @@ type AssetTransaction @entity {
   fromAccountId: String! @index(unique: false)
   toAccountId: String! @index(unique: false)
   amount: BigInt!
-  timestampInSecond: Int!
+  timestampInBlockNumber: Int!
 }
 type AdvertisementReward @entity {
   id: ID!
@@ -35,27 +35,27 @@ type AdvertisementReward @entity {
   reward: BigInt!
   refererDid: String! @index(unique: false)
   award: BigInt!
-  timestampInSecond: Int!
+  timestampInBlockNumber: Int!
 }
 type AdvertisementBudget @entity {
   id: ID!
   advertisementId: String @index(unique: false)
   kolDid: String! @index(unique: false)
   remain: BigInt!
-  timestampInSecond: Int!
+  timestampInBlockNumber: Int!
 }
 type AdvertisementBid @entity {
   id: ID!
   advertisementId: String @index(unique: false)
   nftId: String! @index(unique: false)
   amount: BigInt!
-  timestampInSecond: Int!
+  timestampInBlockNumber: Int!
 }
 type Advertisement @entity {
   id: ID!
   budgetInAd3: BigInt!
   advertiser: String!
-  timestampInSecond: Int!
+  timestampInBlockNumber: Int!
 }
 type Member @entity{
   id: ID!

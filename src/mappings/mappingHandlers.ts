@@ -2,11 +2,6 @@ import { SubstrateEvent, SubstrateBlock } from "@subql/types";
 import { Asset, Did, AdvertisementReward, Advertisement, AdvertisementBudget, AdvertisementBid, Member, AssetPrice, Nft } from "../types";
 import { AssetTransaction } from "../types";
 
-const ChainStartTimeStamp = 1646205156;
-const timeStamp = (blockNumber: number) => {
-    return Math.floor(ChainStartTimeStamp + blockNumber * 12);
-}
-
 function guid() {
     function S4() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -53,7 +48,7 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
     advertisementReward.refererDid = referer.toString();
     advertisementReward.visitorDid = visitor.toString();
     advertisementReward.assetId = assetId.toString();
-    advertisementReward.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
+    advertisementReward.timestampInBlockNumber = event.block.block.header.number.toNumber();
     await advertisementReward.save();
 }
 
@@ -74,7 +69,7 @@ export async function handleAssetTransferred(event: SubstrateEvent): Promise<voi
     tx.fromAccountId = fromAccountId.toString();
     tx.toAccountId = toAccountId.toString();
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
-    tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
+    tx.timestampInBlockNumber = event.block.block.header.number.toNumber();
     await tx.save();
 }
 
@@ -91,7 +86,7 @@ export async function handleAssetBurned(event: SubstrateEvent): Promise<void> {
     tx.block = event.block.block.hash.toString();
     tx.toAccountId = "burned";
     tx.amount = BigInt(balance.toString().replace(/,/g, ''));
-    tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
+    tx.timestampInBlockNumber = event.block.block.header.number.toNumber();
     await tx.save();
 }
 
@@ -107,7 +102,7 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
 
     const valueAfterReplace = value.toHuman().toString().replace(/,/g, '');;
     tx.amount = BigInt(valueAfterReplace);
-    tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
+    tx.timestampInBlockNumber = event.block.block.header.number.toNumber();
     await tx.save();
 }
 
@@ -118,7 +113,7 @@ export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<
     const advertisement = new Advertisement(id.toString());
     advertisement.budgetInAd3 = BigInt(value.toString().replace(/,/g, ''));
     advertisement.advertiser = did.toString();
-    advertisement.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
+    advertisement.timestampInBlockNumber = event.block.block.header.number.toNumber();
     await advertisement.save();
 }
 export async function handleAdvertisementBid(event: SubstrateEvent): Promise<void> {
@@ -128,7 +123,7 @@ export async function handleAdvertisementBid(event: SubstrateEvent): Promise<voi
     advertisementBid.nftId = nftId.toString();
     advertisementBid.advertisementId = adId.toString();
     advertisementBid.amount = BigInt(value.toString().replace(/,/g, ''));
-    advertisementBid.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
+    advertisementBid.timestampInBlockNumber = event.block.block.header.number.toNumber();
     await advertisementBid.save();
 }
 export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<void> {
@@ -138,7 +133,7 @@ export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<vo
     advertisementBudget.kolDid = kol.toString();
     advertisementBudget.advertisementId = id.toString();
     advertisementBudget.remain = BigInt(value.toString().replace(/,/g, ''));
-    advertisementBudget.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
+    advertisementBudget.timestampInBlockNumber = event.block.block.header.number.toNumber();
     await advertisementBudget.save();
 }
 //ad.Bid
@@ -183,7 +178,7 @@ export async function handleTokenBought(event: SubstrateEvent): Promise<void> {
     const price = new AssetPrice(guid());
     price.assetId = id.toString();
     price.price = BigInt(tokens.toString().replace(/,/g, '')) / BigInt(currency.toString().replace(/,/g, ''));
-    price.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
+    price.timestampInBlockNumber = event.block.block.header.number.toNumber();
     await price.save();
 }
 
