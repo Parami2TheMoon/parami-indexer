@@ -1,3 +1,5 @@
+import { ApiPromise } from "@polkadot/api";
+import { Option } from "@polkadot/types";
 import { SubstrateEvent, SubstrateBlock } from "@subql/types";
 import { Asset, Did, AdvertisementReward, Advertisement, AdvertisementBudget, AdvertisementBid, Member, AssetPrice, Nft } from "../types";
 import { AssetTransaction } from "../types";
@@ -15,7 +17,89 @@ function guid() {
 }
 
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
-    logger.debug("mappingHandler got a block: ", block.block.header.number.toNumber());
+    
+    logger.debug("handleBlock got a block: ", block.block.header.number.toNumber());
+    
+    if (block.block.header.number.toNumber() === 1) {
+        
+        logger.info("the first block, so read storage into subql storage");
+        const apiAt = api;
+        
+        await recoverMembersFromGenesis(apiAt);
+        await recoverNftsFromGenesis(apiAt);
+    }
+}
+
+async function recoverNftsFromGenesis(apiAt: ApiPromise): Promise<void> {
+    
+    logger.info("enter recoverNftsFromGenesis");
+
+    const nftIds = [0, 1, 7, 16, 42];
+
+    const assetMetadatas = await Promise.all(nftIds.map(nftId => {
+        return apiAt.query.assets.metadata(nftId);
+    }));
+
+    const assetDetails = await Promise.all(nftIds.map(nftId => {
+        return apiAt.query.assets.asset(nftId);
+    }));
+    
+    const nftMetas = await Promise.all(nftIds.map(nftId => {
+        return apiAt.query.nft.metadata(nftId);
+    }));
+    
+
+    for (let i = 0; i < nftIds.length; i ++) {
+        const nftId = nftIds[i];
+        const assetMetadata = assetMetadatas[i];
+        const assetDetail = assetDetails[i].unwrap();
+        const nftMeta = nftMetas[i];
+
+        const nft = new Nft(nftId.toString());
+        nft.type = 0;// native
+        nft.status = 1;// minted
+        nft.assetId = nftId.toString();
+        nft.assetName = assetMetadata.name.toHuman().toString();
+        nft.assetSymbol = assetMetadata.symbol.toHuman().toString();
+        nft.assetAmount = BigInt(assetDetail.supply.toString().replace(/,/g, ''));
+        nft.kolDid = (nftMeta.toHuman() as any).owner.toString();
+        await nft.save();
+        logger.info(`saved nft, id = ${nftId}`);
+    };
+}
+
+async function recoverMembersFromGenesis(apiAt: ApiPromise): Promise<void> {
+    logger.info(`enter recoverMembersFromGenesis`);
+    const assetIter = await apiAt.query.assets.asset.entries();
+    logger.info(`got ${assetIter.length} assets`);
+
+    const promises = assetIter.map(([key, _value]) => {
+        const [assetId] = key.args;
+        return saveAllAccountIdsOfAsset(apiAt, assetId.toNumber());
+    });
+    
+    Promise.all(promises); 
+}
+
+async function saveAllAccountIdsOfAsset(apiAt: ApiPromise, assetId: number): Promise<void> {
+    
+    logger.info(`enter process of assetId = ${assetId}`);
+
+    let promises: Promise<void>[] = [];
+
+    const iter = await apiAt.query.assets.account.entries(assetId);
+
+    iter.forEach(([key, _value]) => {
+        const [assetId, accountId] = key.args;
+        const member = new Member(accountId.toString() + '.' + assetId.toString());
+        member.accountId = accountId.toString();
+        member.assetId = assetId.toString();
+        promises.push(member.save());
+    });
+    
+    logger.info(`got ${promises.length} member for assetId = ${assetId}`);
+
+    await Promise.all(promises);
 }
 /**
  * {"phase":{"ApplyExtrinsic":"1"},"event":{"method":"Assigned","section":"did","index":"0x2600","data":["0x12816265b2a84ce366f674995e5c439365712c55","5EYCAe5ijQkVKBy52wmGD3kJnFQ8CmyVD9U2ecNMQFoepQvb",null]},"topics":[]}
