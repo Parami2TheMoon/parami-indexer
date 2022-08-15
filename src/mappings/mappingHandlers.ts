@@ -1,10 +1,9 @@
 import { ApiPromise } from "@polkadot/api";
-import { Option } from "@polkadot/types";
 import { SubstrateEvent, SubstrateBlock } from "@subql/types";
-import { Asset, Did, AdvertisementReward, Advertisement, AdvertisementBudget, AdvertisementBid, Member, AssetPrice, Nft } from "../types";
+import { Did, AdvertisementReward, Advertisement, AdvertisementBudget, AdvertisementBid, Member, AssetPrice, Nft } from "../types";
 import { AssetTransaction } from "../types";
 
-const ChainStartTimeStamp = 1646205156;
+const ChainStartTimeStamp = 1660130904;
 const timeStamp = (blockNumber: number) => {
     return Math.floor(ChainStartTimeStamp + blockNumber * 12);
 }
@@ -289,88 +288,25 @@ export async function handleNftCreated(event: SubstrateEvent): Promise<void> {
     });
 }
 export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
-    logger.info(`handleNftMinted handled an event: ${JSON.stringify(event.toHuman())}`);
-    // code is not updated now (block: 492093), use it(9999999999) temporarily
-    // we should use chain version instead of block number
-    // old
-    if (event.block.block.header.number.toNumber() < 504793) {
-        const { event: { data: [did, assetId, _, name, symbol, mintedAmount] } } = event;
-        const asset = new Asset(assetId.toString());
-        asset.ownerDid = did.toString();
-        asset.name = name.toHuman().toString();
-        asset.symbol = symbol.toHuman().toString();
-        asset.amount = BigInt(mintedAmount.toString().replace(/,/g, ''));
-        await asset.save();
-        const nft = new Nft(guid());
-        nft.type = 2;// old asset minted
-        nft.status = 1;
-        nft.assetId = assetId.toString();
-        nft.kolDid = did.toString();
-        nft.assetName = name.toHuman().toString();
-        nft.assetSymbol = symbol.toHuman().toString();
-        nft.assetAmount = BigInt(mintedAmount.toString().replace(/,/g, ''));
-        await nft.save();
-    }
-    else
-    // new 
-    {
-        const { event: { data: [did, nftId, assetId, assetName, assetSymbol, assetAmount] } } = event;
-        Nft.get(nftId.toString()).then(async nft => {
-            if (nft) {
-                nft.kolDid = did.toString();
-                nft.status = 1;// minted
-                nft.assetId = assetId.toString();
-                nft.assetName = assetName.toHuman().toString();
-                nft.assetSymbol = assetSymbol.toHuman().toString();
-                nft.assetAmount = BigInt(assetAmount.toString().replace(/,/g, ''));
-                await nft.save();
-            } else {
-                const nft = new Nft(nftId.toString());
-                nft.type = 0;// native
-                nft.status = 1;// minted
-                nft.assetId = assetId.toString();
-                nft.assetName = assetName.toHuman().toString();
-                nft.assetSymbol = assetSymbol.toHuman().toString();
-                nft.assetAmount = BigInt(assetAmount.toString().replace(/,/g, ''));
-                await nft.save();
-            }
-        });
-    }
-}
-
-export async function handleCodeUpdated(event: SubstrateEvent): Promise<void> {
-    logger.info(`handleCodeUpdated handled an event: ${JSON.stringify(event.toHuman())}`);
-    if (event.block.specVersion === 324) {
-        //In upgrade of 323 -> 324, ad.bided's schema transfer from Bid(DidOf<T>, HashOf<T>, BalanceOf<T>) -> Bid(NftOf<T>, HashOf<T>, BalanceOf<T>), 
-        //so we need migrate the existing value in db
-        //There only exists two kol before this upgrade, so deal with them manually
-        //0x33f89db830e20483cd44cf5d906bb4d2da1ab896's prefferredNft is 0
-        //0x0c3d48626e46524699f86112035152aa6336bee9's prefferredNft is 7
-        let preferredOfDID = new Map([["0x33f89db830e20483cd44cf5d906bb4d2da1ab896", "0"], ["0x0c3d48626e46524699f86112035152aa6336bee9", "7"]]);
-
-        let bids = await AdvertisementBid.getByNftId("0x33f89db830e20483cd44cf5d906bb4d2da1ab896");
-        bids = bids.concat(await AdvertisementBid.getByNftId("0x0c3d48626e46524699f86112035152aa6336bee9"));
-
-        for (let bid of bids) {
-            if (!preferredOfDID.has(bid.nftId)) {
-                logger.info(`preferredOfDID doesnot contains ${stringifyWithBigIntSupport(bid)}`);
-                continue;
-            }
-            logger.info(`got bid as ${stringifyWithBigIntSupport(bid)}, bid.nftId is ${bid.nftId}, preferredOfDID is ${preferredOfDID.get(bid.nftId)} `);
-            let oldNftId = bid.nftId;
-            bid.nftId = preferredOfDID.get(bid.nftId);
-            await bid.save();
-            logger.info(`update bid's nftId from ${oldNftId} to ${bid.nftId}`)
+    const { event: { data: [did, nftId, assetId, assetName, assetSymbol, assetAmount] } } = event;
+    Nft.get(nftId.toString()).then(async nft => {
+        if (nft) {
+            nft.kolDid = did.toString();
+            nft.status = 1;// minted
+            nft.assetId = assetId.toString();
+            nft.assetName = assetName.toHuman().toString();
+            nft.assetSymbol = assetSymbol.toHuman().toString();
+            nft.assetAmount = BigInt(assetAmount.toString().replace(/,/g, ''));
+            await nft.save();
+        } else {
+            const nft = new Nft(nftId.toString());
+            nft.type = 0;// native
+            nft.status = 1;// minted
+            nft.assetId = assetId.toString();
+            nft.assetName = assetName.toHuman().toString();
+            nft.assetSymbol = assetSymbol.toHuman().toString();
+            nft.assetAmount = BigInt(assetAmount.toString().replace(/,/g, ''));
+            await nft.save();
         }
-    }
-
-    function stringifyWithBigIntSupport(obj: Object) {
-        JSON.stringify(
-            obj,
-            (key, value) =>
-                typeof value === 'bigint'
-                    ? value.toString()
-                    : value // return everything else unchanged
-        )
-    }
+    });
 }
