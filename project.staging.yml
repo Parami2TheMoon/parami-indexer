@@ -81,9 +81,3 @@ dataSources:
           filter:
             module: nft
             method: Minted
-        - handler: handleCodeUpdated
-          kind: substrate/EventHandler
-          filter:
-            module: system
-            method: CodeUpdated
-
