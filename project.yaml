@@ -56,7 +56,7 @@ dataSources:
         - handler: handleAssetIssued
           kind: substrate/EventHandler
           filter:
-            module: asset
+            module: assets
             method: Issued
         - handler: handleAssetTransferred
           kind: substrate/EventHandler

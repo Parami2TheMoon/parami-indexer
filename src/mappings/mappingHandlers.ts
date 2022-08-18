@@ -145,7 +145,7 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
  * @param event data: 		Issued { asset_id: T::AssetId, owner: T::AccountId, total_supply: T::Balance },
  */
 export async function handleAssetIssued(event: SubstrateEvent): Promise<void> {
-    logger.info(`handleAssetTransferred got event: ${JSON.stringify(event.toHuman())}`); 
+    logger.info(`handleAssetIssued got event: ${JSON.stringify(event.toHuman())}`); 
     const { event: { data: [assetId, owner, total_supply] } } = event;
     const member = new Member(owner.toString() + '.' + assetId.toString());
     member.accountId = owner.toString();
