@@ -142,6 +142,29 @@ export async function handleAdPayout(event: SubstrateEvent): Promise<void> {
 
 /**
  * 
+ * @param event data: 		Issued { asset_id: T::AssetId, owner: T::AccountId, total_supply: T::Balance },
+ */
+export async function handleAssetIssued(event: SubstrateEvent): Promise<void> {
+    logger.info(`handleAssetTransferred got event: ${JSON.stringify(event.toHuman())}`); 
+    const { event: { data: [assetId, owner, total_supply] } } = event;
+    const member = new Member(owner.toString() + '.' + assetId.toString());
+    member.accountId = owner.toString();
+    member.assetId = assetId.toString();
+    await member.save();
+
+    const tx = new AssetTransaction(guid());
+    tx.assetId = assetId.toString();
+    tx.block = event.block.block.hash.toString();
+    tx.fromAccountId = "0";
+    tx.toAccountId = owner.toString();
+    tx.amount = BigInt(total_supply.toString().replace(/,/g, ''));
+    tx.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
+    await tx.save(); 
+}
+
+
+/**
+ * 
  * @param event 		data: 		Transferred(T::AssetId, T::AccountId, T::AccountId, T::Balance)
  */
 export async function handleAssetTransferred(event: SubstrateEvent): Promise<void> {

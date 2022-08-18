@@ -53,6 +53,11 @@ dataSources:
           filter:
             module: ad
             method: SwapTriggered
+        - handler: handleAssetIssued
+          kind: substrate/EventHandler
+          filter:
+            module: asset
+            method: Issued
         - handler: handleAssetTransferred
           kind: substrate/EventHandler
           filter:
