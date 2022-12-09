@@ -26,7 +26,24 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
         
         await recoverMembersFromGenesis(apiAt);
         await recoverNftsFromGenesis(apiAt);
+        await recoverDidsFromGenesis(apiAt);
     }
+}
+
+async function recoverDidsFromGenesis(apiAt: ApiPromise) {
+    logger.info("enter recoverDidsFromGenesis");
+    let didMetas = await apiAt.query.did.metadata.entries();
+
+    await Promise.all(didMetas.map(
+        didMeta => {
+            const did = didMeta[0].toHuman() as any;
+            const [account, revoked, created] = didMeta[1].toHuman() as any;
+            let entity = new Did(guid());
+            entity.did = did;
+            entity.stashAccountId = account;
+            return entity.save();     
+        }
+    ));
 }
 
 async function recoverNftsFromGenesis(apiAt: ApiPromise): Promise<void> {
@@ -293,6 +310,7 @@ export async function handleTokenBought(event: SubstrateEvent): Promise<void> {
     await price.save();
 }
 
+//subquery-node_1   | 2022-12-09T10:37:04.002Z <sandbox> INFO handleNftCreated handled an event: {"phase":{"ApplyExtrinsic":"2"},"event":{"method":"Created","section":"nft","index":"0x6b00","data":["0x9b618f7cc7c6d2d4c77ba4dc9b05910c3f5c7e40","29,911"]},"topics":[]} 
 export async function handleNftCreated(event: SubstrateEvent): Promise<void> {
     logger.info(`handleNftCreated handled an event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [did, nftId] } } = event;
@@ -307,7 +325,12 @@ export async function handleNftCreated(event: SubstrateEvent): Promise<void> {
         }
         nft.status = 0;// created
         nft.kolDid = did.toString();
-        await nft.save();
+        try {
+            await nft.save();
+        } catch(err) {
+            console.error("handleNftCreated got error", err);
+            throw err;
+        }
     });
 }
 export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
@@ -323,6 +346,7 @@ export async function handleNftMinted(event: SubstrateEvent): Promise<void> {
             await nft.save();
         } else {
             const nft = new Nft(nftId.toString());
+            nft.kolDid = did.toString();
             nft.type = 0;// native
             nft.status = 1;// minted
             nft.assetId = assetId.toString();
