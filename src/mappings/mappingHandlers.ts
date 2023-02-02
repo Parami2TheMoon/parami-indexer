@@ -237,9 +237,8 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
 //ad.Deposited
 export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAdvertisementCreate got an event: ${JSON.stringify(event.toHuman())}`);
-    const { event: { data: [id, did, value] } } = event;
+    const { event: { data: [id, did] } } = event;
     const advertisement = new Advertisement(id.toString());
-    advertisement.budgetInAd3 = BigInt(value.toString().replace(/,/g, ''));
     advertisement.advertiser = did.toString();
     advertisement.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
     await advertisement.save();
@@ -250,10 +249,25 @@ export async function handleAdvertisementBid(event: SubstrateEvent): Promise<voi
     const advertisementBid = new AdvertisementBid(guid());
     advertisementBid.nftId = nftId.toString();
     advertisementBid.advertisementId = adId.toString();
+    const ad = await Advertisement.get(adId.toString());
+    advertisementBid.advertiser = ad.advertiser;
     advertisementBid.amount = BigInt(value.toString().replace(/,/g, ''));
     advertisementBid.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
+    advertisementBid.active = true;
     await advertisementBid.save();
 }
+
+export async function handleAdvertisementBidEnd(event: SubstrateEvent): Promise<void> {
+    logger.info(`handleAdvertisementBidEnd handled an event: ${JSON.stringify(event.toHuman())}`);
+    const { event: { data: [nftId, adId, value] } } = event;
+
+    const bids = await AdvertisementBid.getByNftId(adId.toString());
+    await Promise.all(bids.filter(bid => bid.nftId === nftId.toString()).map(async (bid) => {
+        bid.active = false;
+        await bid.save();
+    }));
+}
+
 export async function handleSlotRemainChanged(event: SubstrateEvent): Promise<void> {
     logger.info(`handleSlotRemainChanged handled an event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [id, kol, value] } } = event;

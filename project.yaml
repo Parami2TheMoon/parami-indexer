@@ -42,12 +42,17 @@ dataSources:
           kind: substrate/EventHandler
           filter:
             module: ad
-            method: Deposited
+            method: Created
         - handler: handleAdvertisementBid
           kind: substrate/EventHandler
           filter:
             module: ad
             method: Bid
+        - handler: handleAdvertisementBidEnd
+          kind: substrate/EventHandler
+          filter:
+            module: ad
+            method: End
         - handler: handleSlotRemainChanged
           kind: substrate/EventHandler
           filter:
