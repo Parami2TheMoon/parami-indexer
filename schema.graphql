@@ -47,13 +47,15 @@ type AdvertisementBudget @entity {
 type AdvertisementBid @entity {
   id: ID!
   advertisementId: String @index(unique: false)
+  advertiser: String! @index(unique: false)
   nftId: String! @index(unique: false)
   amount: BigInt!
   timestampInSecond: Int!
+  active: Boolean!
 }
 type Advertisement @entity {
   id: ID!
-  budgetInAd3: BigInt!
+  budgetInAd3: BigInt
   advertiser: String!
   timestampInSecond: Int!
 }
