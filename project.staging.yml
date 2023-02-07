@@ -16,6 +16,8 @@ dataSources:
     mapping:
       file: ./dist/index.js
       handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
         - handler: handleDidAssigned
           kind: substrate/EventHandler
           filter:
@@ -40,12 +42,17 @@ dataSources:
           kind: substrate/EventHandler
           filter:
             module: ad
-            method: Deposited
+            method: Created
         - handler: handleAdvertisementBid
           kind: substrate/EventHandler
           filter:
             module: ad
             method: Bid
+        - handler: handleAdvertisementBidEnd
+          kind: substrate/EventHandler
+          filter:
+            module: ad
+            method: End
         - handler: handleSlotRemainChanged
           kind: substrate/EventHandler
           filter:
@@ -54,7 +61,7 @@ dataSources:
         - handler: handleAssetIssued
           kind: substrate/EventHandler
           filter:
-            module: asset
+            module: assets
             method: Issued
         - handler: handleAssetTransferred
           kind: substrate/EventHandler
