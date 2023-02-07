@@ -238,6 +238,7 @@ export async function handleAd3Transaction(event: SubstrateEvent): Promise<void>
 export async function handleAdvertisementCreate(event: SubstrateEvent): Promise<void> {
     logger.info(`handleAdvertisementCreate got an event: ${JSON.stringify(event.toHuman())}`);
     const { event: { data: [id, did] } } = event;
+    logger.info(`handleAdvertisementCreate: id = ${id}, did = ${did}`);
     const advertisement = new Advertisement(id.toString());
     advertisement.advertiser = did.toString();
     advertisement.timestampInSecond = timeStamp(event.block.block.header.number.toNumber());
